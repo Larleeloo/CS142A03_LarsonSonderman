@@ -52,10 +52,10 @@ public class WorldOfThings implements iWorld {
    public Player pInsert(int inventorySize, Item[] inventory, int hp, int mp,
                        int otherStat, int strength, int charisma, int wisdom, int intelligence, int dexterity, int constitution, int stamina, int confidence, int speed,
                        int xCoords, int yCoords,
-                       int direction){
+                       int direction, int data){
       Player new_player = new Player(inventorySize,inventory,hp,mp,
                                        otherStat,strength,charisma,wisdom,intelligence,dexterity,constitution,stamina,confidence,speed,
-                                       xCoords,yCoords,direction);
+                                       xCoords,yCoords,direction,data);
       if (this.pHead == null) {
          this.pHead = new_player;
       }
@@ -233,5 +233,31 @@ public class WorldOfThings implements iWorld {
          }
       }
       return playerPresent;
+   }
+   public Player findPlayer1(){
+      Player player = new Player();
+      boolean isHuman = false;
+      for(int i = 0; i < pSize; i++){
+         player = pTraverseForward(i);
+         if(player.data == 1){
+            isHuman = true;
+            return player;
+         }
+      }
+      System.out.println("Status of human player: " + isHuman);
+      return player;
+   }
+   public Player findAnNPC(){
+      Player npc = new Player();
+      boolean isNPC = false;
+      for(int i = 0; i < pSize; i++){
+         npc = pTraverseForward(i);
+         if(npc.data == 0){
+            isNPC = true;
+            return npc;
+         }
+      }
+      System.out.println("Status of human npc: " + isNPC);
+      return npc;
    }
 }
