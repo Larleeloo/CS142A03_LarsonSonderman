@@ -12,7 +12,7 @@ public interface iWorld {
     public Player pInsert(int inventorySize, Item[] inventory, int hp, int mp,
                         int otherStat, int strength, int charisma, int wisdom, int intelligence, int dexterity, int constitution, int stamina, int confidence, int speed,
                         int xCoords, int yCoords,
-                        int direction);
+                        int direction, int data);
     public void iInsert();
     public void iInsert(int data, Player owner, int locationx, int locationy, String effect);
     public void iInsert(int data, Player owner, int locationx, int locationy, String effect1, String effect2, String effect3, String effect4, String effect5);
@@ -36,5 +36,8 @@ public interface iWorld {
     public void pPrintInventory(int pIndex);
 
     public boolean containsPlayerAtPos(int x, int y);
+
+    public Player findPlayer1();
+    public Player findAnNPC();
 
 }

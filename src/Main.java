@@ -4,10 +4,10 @@ import java.io.IOException;
 
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         Game HeroesAndMonsters = new Game(1);
         JFrame frame = new JFrame();
-        JPanel panel = new MovementPanel(HeroesAndMonsters.battlefields[0]);
+        JPanel panel = new MovementPanel(HeroesAndMonsters);
 
         frame.add(panel);
         frame.setSize(1920,1080);

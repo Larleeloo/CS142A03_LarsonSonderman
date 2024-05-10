@@ -2,6 +2,7 @@ import java.awt.*;
 import java.util.Random;
 
 public class Player implements iPlayer{
+    String name;
     Player next;
     Player prev;
     int data;
@@ -15,6 +16,8 @@ public class Player implements iPlayer{
     int direction;
 
     public Player(){
+        data = 0;
+        name = "NONE";
         inventorySize = 10;
         inventory[0] = new Item();
         hp = 100;
@@ -39,7 +42,8 @@ public class Player implements iPlayer{
     public Player(int inventorySize, Item[] inventory, int hp, int mp,
                   int otherStat, int strength, int charisma, int wisdom, int intelligence, int dexterity, int constitution, int stamina, int confidence, int speed,
                   int xCoords, int yCoords,
-                  int direction){
+                  int direction, int data){
+        this.data = data;
         this.inventorySize = inventorySize;
         this.inventory = inventory;
         this.hp = hp;
@@ -62,7 +66,9 @@ public class Player implements iPlayer{
 
 
     }
-
+    public String getName(){
+        return this.name;
+    }
     public Player getNext(){
         return this.next;
     }
@@ -94,7 +100,9 @@ public class Player implements iPlayer{
     public int getStatIndex(int index){
         return this.stats[index];
     }
-
+    public void setName(String name){
+        this.name = name;
+    }
     public Player setNext(Player playerIn){
         this.next = playerIn;
         return this.next;

@@ -1,4 +1,5 @@
 public interface iPlayer {
+    String name = "NONE";
     int data = 0;
     Player next = null;
     Player prev = null;
@@ -11,7 +12,7 @@ public interface iPlayer {
     int yCoords = 0;
 
     int direction = 1;
-
+    public String getName();
     public Player getNext();
 
     public Player getPrev();
@@ -26,6 +27,7 @@ public interface iPlayer {
 
     public int getStatIndex(int index);
 
+    public void setName(String name);
     public Player setNext(Player playerIn);
 
     public Player setPrev(Player playerIn);
