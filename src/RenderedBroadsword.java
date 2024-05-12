@@ -20,7 +20,7 @@ public class RenderedBroadsword extends JComponent{
         x = broadsword.getLocationx();
         y = broadsword.getLocationy();
         color = null;
-        file = new File("C:\\Users\\Larle\\OneDrive\\Desktop\\CS142A03_LarsonSonderman\\src\\stone.png");
+        file = new File("/Users/sonderman/Desktop/CS142A03_LarsonSonderman/src/stone.png");
         bufferedImage = ImageIO.read(file);
     }
     public RenderedBroadsword(int x, int y, int diameter, Color color) throws IOException {

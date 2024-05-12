@@ -21,6 +21,24 @@ public class GameGraphics extends JComponent {
         repaint();
     }
 
+    public void doSomethingWithPrevInput(int input){
+        switch (input){
+            case 1:
+                battlefield.broadswords[0].moveOne();
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            default:
+                break;
+        }
+    }
+
     public void paintBroadswords(Graphics g, RenderedBroadsword[] broadswords){
         for (RenderedBroadsword broadsword : broadswords) {
             g.drawImage(broadsword.getBufferedImage(), broadsword.getX(), broadsword.getY(), null);
