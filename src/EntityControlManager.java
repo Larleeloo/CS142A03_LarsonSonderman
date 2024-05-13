@@ -1,32 +1,32 @@
 import java.awt.*;
 
-public class WorldOfThings implements iWorld {
+public class EntityControlManager implements iEntityControlManager {
    Node head;
    int size = 0;
    Player pHead;
    int pSize = 0;
    int iSize = 0;
    Item[] worldInventory = new Item[63];
-   Battlefield bHead = null;
+   Scene bHead = null;
    int bSize = 0;
+
    //Nodes in this case pertain only to world data and are therefore the only code initialized in each constructor
-   public WorldOfThings(Graphics mainGraphics){
+   public EntityControlManager(Graphics mainGraphics) {
       this.head = new Node();
       this.size++;
    }
-   public WorldOfThings(int worldData){
+
+   public EntityControlManager(int worldData) {
       this.head = new Node(worldData);
       this.size++;
    }
 
    // Method to insert a new node
-   public void nInsert(int data)
-   {
+   public void nInsert(int data) {
       Node new_node = new Node(data);
       if (this.head == null) {
          this.head = new_node;
-      }
-      else {
+      } else {
          Node temp = this.head;
          while (temp.next != null) {
             temp = temp.next;
@@ -34,66 +34,67 @@ public class WorldOfThings implements iWorld {
          temp.next = new_node;
       }
    }
+
    //blank player added to end of doubly list
-   public Player pInsert()
-   {
+   public Player pInsert() {
       Player new_player = new Player();
       if (this.pHead == null) {
          this.pHead = new_player;
-      }
-      else {
+      } else {
          this.pTraverseForward(this.pSize).next = new_player;
-         new_player.prev = this.pTraverseForward(this.pSize-1);
-      }
-      this.pSize++;
-      return new_player;
-   }
-   //inserts player with all parameters
-   public Player pInsert(int inventorySize, Item[] inventory, int hp, int mp,
-                       int otherStat, int strength, int charisma, int wisdom, int intelligence, int dexterity, int constitution, int stamina, int confidence, int speed,
-                       int xCoords, int yCoords,
-                       int direction, int data){
-      Player new_player = new Player(inventorySize,inventory,hp,mp,
-                                       otherStat,strength,charisma,wisdom,intelligence,dexterity,constitution,stamina,confidence,speed,
-                                       xCoords,yCoords,direction,data);
-      if (this.pHead == null) {
-         this.pHead = new_player;
-      }
-      else {
-         this.pTraverseForward(this.pSize).next = new_player;
-         new_player.prev = this.pTraverseForward(this.pSize-1);
+         new_player.prev = this.pTraverseForward(this.pSize - 1);
       }
       this.pSize++;
       return new_player;
    }
 
-   public void iInsert(){
+   //inserts player with all parameters
+   public Player pInsert(String name, int role, int inventorySize, Item[] inventory, int hp, int mp,
+                         int otherStat, int strength, int charisma, int wisdom, int intelligence, int dexterity, int constitution, int stamina, int confidence, int speed,
+                         int xCoords, int yCoords,
+                         int direction, int data) {
+      Player new_player = new Player(name, role, inventorySize, inventory, hp, mp,
+              otherStat, strength, charisma, wisdom, intelligence, dexterity, constitution, stamina, confidence, speed,
+              xCoords, yCoords, direction, data);
+      if (this.pHead == null) {
+         this.pHead = new_player;
+      } else {
+         this.pTraverseForward(this.pSize).next = new_player;
+         new_player.prev = this.pTraverseForward(this.pSize - 1);
+      }
+      this.pSize++;
+      return new_player;
+   }
+
+   public void iInsert() {
       this.worldInventory[iSize] = new Item();
       this.iSize++;
    }
-   public void iInsert(int data, Player owner, int locationx, int locationy, String effect){
+
+   public void iInsert(int data, Player owner, int locationx, int locationy, String effect) {
       this.worldInventory[iSize] = new Item(data, owner, locationx, locationy, effect);
       this.iSize++;
    }
-   public void iInsert(int data, Player owner, int locationx, int locationy, String effect1, String effect2, String effect3, String effect4, String effect5){
+
+   public void iInsert(int data, Player owner, int locationx, int locationy, String effect1, String effect2, String effect3, String effect4, String effect5) {
       this.worldInventory[iSize] = new Item(data, owner, locationx, locationy, effect1, effect2, effect3, effect4, effect5);
       this.iSize++;
    }
-   public void bInsert(){
+
+   public void bInsert() {
 
    }
+
    //traverses to an index or end of list of index > pSize
-   public Player pTraverseForward(int index){
+   public Player pTraverseForward(int index) {
       Player player = this.pHead;
-      if(player == null){
+      if (player == null) {
          return null;
-      }
-      else {
+      } else {
          for (int i = 0; i < index; i++) {
-            if(player.next != null) {
+            if (player.next != null) {
                player = player.next;
-            }
-            else {
+            } else {
                // System.out.println("End of Player List"); //optional
             }
          }
@@ -102,7 +103,7 @@ public class WorldOfThings implements iWorld {
 
    }
 
-   public void pDelete(int index){
+   public void pDelete(int index) {
       pTraverseForward(index).prev.next = pTraverseForward(index).next;
       pTraverseForward(index).next = null;
       pTraverseForward(index).prev = null;
@@ -113,13 +114,13 @@ public class WorldOfThings implements iWorld {
       pTraverseForward(index).mp = 0;
       pSize--;
    }
+
    //changes stats[statIndex] at index by statChange amount
-   public void changeStat(int pIndex, int statIndex, int statChange)
-   {
+   public void changeStat(int pIndex, int statIndex, int statChange) {
       this.pTraverseForward(pIndex).stats[statIndex] += statChange;
    }
-   public void printList()
-   {
+
+   public void printList() {
       Node currNode = this.head;
       System.out.print("LinkedList: ");
       while (currNode != null) {
@@ -127,17 +128,19 @@ public class WorldOfThings implements iWorld {
          currNode = currNode.next;
       }
    }
-   public void pUpdate(){
-      for(int i = 0; i <= pSize; i++){
-         if(pTraverseForward(i) != this.pHead) {
+
+   public void pUpdate() {
+      for (int i = 0; i <= pSize; i++) {
+         if (pTraverseForward(i) != this.pHead) {
             if (pTraverseForward(i).prev.next != pTraverseForward(i)) {
                pTraverseForward(i).prev = pTraverseForward(i - 1);
             }
          }
       }
    }
-   public void pPush(Player p){
-      if(p != this.pHead) {
+
+   public void pPush(Player p) {
+      if (p != this.pHead) {
          p.prev.next = p.next;
          p.next = pHead;
          p.prev = null;
@@ -145,15 +148,15 @@ public class WorldOfThings implements iWorld {
          pHead.next.prev = p;
       }
    }
-   public void pSwap(int player1Index, int player2Index)
-   {
+
+   public void pSwap(int player1Index, int player2Index) {
    }
+
    //pHead.stats[x] > pHead.next.stats[x] (insertion sort)
-   public void sortByHighestStatX(int x){
-      if(this.pHead == null){
+   public void sortByHighestStatX(int x) {
+      if (this.pHead == null) {
          System.out.println("world " + this.head.data + "has no players");
-      }
-      else {
+      } else {
          Player playerOut = this.pHead;
          int indexOut = 0;
          while (indexOut < pSize) {                //outer loop
@@ -182,13 +185,13 @@ public class WorldOfThings implements iWorld {
 
    }
 
-   public void pPrintStats(){
-      for(int i = 0; i < pSize; i++){
+   public void pPrintStats() {
+      for (int i = 0; i < pSize; i++) {
          System.out.print("\nP" + (i + 1) + " stats: ");
 
-         for(int s = 0; s < 10; s++){
-            System.out.print( pTraverseForward(i).stats[s]);
-            if(s < 9){
+         for (int s = 0; s < 10; s++) {
+            System.out.print(pTraverseForward(i).stats[s]);
+            if (s < 9) {
                System.out.print(",");
             }
          }
@@ -196,68 +199,42 @@ public class WorldOfThings implements iWorld {
       }
    }
 
-   public void pAddToInventory(int pIndex, int slot, Item item){
-      if(slot<pTraverseForward(pIndex).inventorySize) {
+   public void pAddToInventory(int pIndex, int slot, Item item) {
+      if (slot < pTraverseForward(pIndex).inventorySize) {
          pTraverseForward(pIndex).inventory[slot] = item;
-      }
-      else{
+      } else {
          System.out.println("Invalid slot assign attempt");
       }
    }
 
-   public int pCountInventoryItems(Item item, int pIndex){
+   public int pCountInventoryItems(Item item, int pIndex) {
       int count = 0;
       Item[] pInventory = pTraverseForward(pIndex).inventory;
-      for(int i = 0; i < pTraverseForward(pIndex).inventorySize; i++) {
+      for (int i = 0; i < pTraverseForward(pIndex).inventorySize; i++) {
          if (pInventory[i] != null && pInventory[i].data == item.data) {
-            count ++;
+            count++;
          }
       }
       return count;
    }
 
-   public void pPrintInventory(int pIndex){
+   public void pPrintInventory(int pIndex) {
       Item[] pInventory = pTraverseForward(pIndex).inventory;
-      for(int i = 0; i < pTraverseForward(pIndex).getInventorySize(); i++) {
-         if(pInventory[i] != null) {
+      for (int i = 0; i < pTraverseForward(pIndex).getInventorySize(); i++) {
+         if (pInventory[i] != null) {
             System.out.print("item#" + pInventory[i].data + ", ");
          }
       }
    }
-   public boolean containsPlayerAtPos(int x, int y){
+
+   public boolean containsPlayerAtPos(int x, int y) {
       boolean playerPresent = false;
-      for(int i = 0; i < this.pSize; i++){
-         if(pTraverseForward(i).getxCoords() == x && this.pTraverseForward(i).getyCoords() == y){
+      for (int i = 0; i < this.pSize; i++) {
+         if (pTraverseForward(i).getxGraphicalCoords() == x && this.pTraverseForward(i).getyGraphicalCoords() == y) {
             playerPresent = true;
             break;
          }
       }
       return playerPresent;
-   }
-   public Player findPlayer1(){
-      Player player = new Player();
-      boolean isHuman = false;
-      for(int i = 0; i < pSize; i++){
-         player = pTraverseForward(i);
-         if(player.data == 1){
-            isHuman = true;
-            return player;
-         }
-      }
-      System.out.println("Status of human player: " + isHuman);
-      return player;
-   }
-   public Player findAnNPC(){
-      Player npc = new Player();
-      boolean isNPC = false;
-      for(int i = 0; i < pSize; i++){
-         npc = pTraverseForward(i);
-         if(npc.data == 0){
-            isNPC = true;
-            return npc;
-         }
-      }
-      System.out.println("Status of human npc: " + isNPC);
-      return npc;
    }
 }

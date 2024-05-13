@@ -1,15 +1,15 @@
-public interface iWorld {
+public interface iEntityControlManager {
     Node head = null;
     int size = 0;
     Player pHead = null;
     int pSize = 0;
     Item[] worldInventory = new Item[63];
     int iSize = 0;
-    Battlefield bHead = null;
+    Scene bHead = null;
     int bSize = 0;
     public void nInsert(int data);
     public Player pInsert();
-    public Player pInsert(int inventorySize, Item[] inventory, int hp, int mp,
+    public Player pInsert(String name,int role ,int inventorySize, Item[] inventory, int hp, int mp,
                         int otherStat, int strength, int charisma, int wisdom, int intelligence, int dexterity, int constitution, int stamina, int confidence, int speed,
                         int xCoords, int yCoords,
                         int direction, int data);
@@ -36,8 +36,5 @@ public interface iWorld {
     public void pPrintInventory(int pIndex);
 
     public boolean containsPlayerAtPos(int x, int y);
-
-    public Player findPlayer1();
-    public Player findAnNPC();
 
 }

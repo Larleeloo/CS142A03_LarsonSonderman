@@ -5,15 +5,12 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Random;
 
-//todo
-//merge Game and Movement panel (rename to just Game)
-//create frames
-
 public class Game extends JPanel {
     int input = 0;
     int gameState = 0;
     JLabel instructions = new JLabel("Nothin");
     JLabel directions = new JLabel();
+    JLabel extraText = new JLabel();
     JButton button1 = new JButton("Button 1");
     JButton button2 = new JButton("Button 2");
     JButton button3 = new JButton("Button 3");
@@ -28,7 +25,7 @@ public class Game extends JPanel {
     private boolean gameOver = false;
     private boolean gameStarted = false;
     private int turnCounter = 0;
-    Battlefield[] battlefields;
+    Scene currentScene;
     Player player1;
     Player player2;
     ButtonOneListener buttonOneListener = new ButtonOneListener();
@@ -39,16 +36,19 @@ public class Game extends JPanel {
     GameStartListener gameStartListener = new GameStartListener();
     ActionEvent doAction = new ActionEvent(this, 1, "COMMAND1");
     public Game(int landArea) throws IOException {
-        battlefields = FillBattlefields.createBattlefields(landArea, 10);
-        player1 = battlefields[0].findPlayer1();
-        player2 = battlefields[0].findAnNPC();
-        this.gameGraphics = new GameGraphics(battlefields[0]);
+        currentScene = GenerateEntities.createScene(10);
+        player1 = currentScene.pInsert();
+        player2 = currentScene.pInsert();
+        player2.setRole(1);
+        this.gameGraphics = new GameGraphics(currentScene);
         this.setPreferredSize(new Dimension(1920,1080));
-        gameGraphics.setPreferredSize(new Dimension(1280,720));
+        gameGraphics.setPreferredSize(new Dimension(720,720));
         this.add(gameGraphics);
         this.add(instructions);
         this.add(directions);
         directions.setVisible(false);
+        this.add(extraText);
+        extraText.setVisible(false);
         this.add(button1);
         button1.addActionListener(buttonOneListener);
         button1.setVisible(false);
@@ -77,17 +77,11 @@ public class Game extends JPanel {
     }
 
     public Player whoseTurn(){
-        if(gameState == 3 && doesHumanStart){
+        if(gameState == 3){
             return player1;
-        }
-        else if(gameState == 3 && !doesHumanStart){
-            return player2;
-        }
-        else if(gameState == 4 && doesHumanStart){
-            return player2;
         }
         else {
-            return player1;
+            return player2;
         }
     }
     public void playGame() {
@@ -99,12 +93,14 @@ public class Game extends JPanel {
     }
     private Player initializeHuman() {
         instructions.setText("Please select a name below for your player");
+        player1.setRole(0);
         gameGraphics.nextFrame();
         gameState = 1;
         return player1;
     }
     private Player initializeComputer(){
         instructions.setText("Who would you like to play against?\nThis is your opponent... choose wisely");
+        player2.setRole(1);
         gameGraphics.nextFrame();
         gameState = 2;
         return player2;
@@ -112,28 +108,16 @@ public class Game extends JPanel {
     private void rules() { //Display the rules of the game
         doesHumanStart = flipCoin();
         if (doesHumanStart) {
-            instructions.setText("\n\nLets begin! Human, (or " + player1.getName() + ") you go first... Please enter a number to remove some marbles");
+            instructions.setText("Human starts... Choose an action!");
+            gameState = 3;
         } else {
-             instructions.setText("\n\nLets begin! Computer, (or " + player2.getName() + "), you go first... Please enter a number to remove some marbles");
+            instructions.setText("Robot starts... Choose an action!");
+             gameState = 4;
         }
-        gameState = 3;
+        turnCounter = 1;
         gameGraphics.nextFrame();
     }
     private void takeTurn(){
-        instructions.setText("GameState: " + gameState);
-        directions.setVisible(true);
-        if(gameState == 3 && doesHumanStart){
-            directions.setText("Human turn " + turnCounter);
-        }
-        else if(gameState == 3 && !doesHumanStart){
-            directions.setText("Robot turn " + turnCounter);
-        }
-        else if(gameState == 4 && doesHumanStart){
-            directions.setText("Robot  turn " + turnCounter);
-        }
-        else {
-            directions.setText("Human turn " + turnCounter);
-        }
         turnCounter++;
         gameGraphics.nextFrame();
     }
@@ -156,49 +140,46 @@ public class Game extends JPanel {
                     initializeGame();
                     break;
                 case 1:
-                    gameGraphics.doSomethingWithPrevInput(input);
-                    button1.setVisible(true);
-                    button2.setVisible(true);
-                    button3.setVisible(true);
-                    button4.setVisible(true);
-                    button5.setVisible(true);
                     button1.setText("rName 1");
                     button2.setText("rName 2");
                     button3.setText("rName 3");
                     button4.setText("rName 4");
                     button5.setText("rName 5");
+                    directions.setVisible(true);
+                    directions.setText("Human name: " + player1.getName());
                     initializeComputer();
                     break;
                 case 2:
-                    gameGraphics.doSomethingWithPrevInput(input);
                     button1.setText("Move");
                     button2.setText("Turn Left");
                     button3.setText("Turn Right");
                     button4.setText("Turn Around");
                     button5.setText("Attack");
+                    directions.setText("Robot name: " + player2.getName());
                     rules();
+                    gameGraphics.nextFrame();
                     break;
                 case 3:
-                    input = 0;
-                    gameGraphics.doSomethingWithPrevInput(input);
                     button1.setText("Move");
                     button2.setText("Turn Left");
                     button3.setText("Turn Right");
                     button4.setText("Turn Around");
                     button5.setText("Attack");
+                    currentScene.updateScene();
+                    gameGraphics.nextFrame();
                     takeTurn();
-                    gameState = 4;
+                    input = 0;
                     break;
                 case 4:
-                    input = 0;
                     button1.setText("Move");
                     button2.setText("Turn Left");
                     button3.setText("Turn Right");
                     button4.setText("Turn Around");
                     button5.setText("Attack");
-                    gameGraphics.doSomethingWithPrevInput(input);
+                    currentScene.updateScene();
+                    gameGraphics.nextFrame();
                     takeTurn();
-                    gameState = 3;
+                    input = 0;
                     break;
                 case 5:
                     button1.setVisible(false);
@@ -221,19 +202,32 @@ public class Game extends JPanel {
                     break;
                 case 1:
                     player1.setName("Name 1");
+                    gameStartListener.actionPerformed(doAction);
                     break;
                 case 2:
                     player2.setName("rName 1");
+                    gameStartListener.actionPerformed(doAction);
                     break;
                 case 3:
-                    whoseTurn().moveForward(1);
+                    player1.moveForward(1);
+                    gameState = 4;
+                    instructions.setText("Good choice, switching to robots turn...");
+                    directions.setText("Game State: " + gameState);
+                    gameGraphics.nextFrame();
                     input = 1;
+                    gameStartListener.actionPerformed(doAction);
                     break;
                 case 4:
-                    whoseTurn().moveForward(1);
+                    player2.moveForward(1);
+                    gameState = 3;
+                    instructions.setText("Good choice, switching to humans turn...");
+                    directions.setText("Game State: " + gameState);
+                    gameGraphics.nextFrame();
                     input = 1;
+                    gameStartListener.actionPerformed(doAction);
                     break;
                 case 5:
+                    input = 0;
                     break;
                 default:
                     break;
@@ -241,18 +235,39 @@ public class Game extends JPanel {
         }
     }
     class ButtonTwoListener implements ActionListener {
-        String choice;
         public void actionPerformed(ActionEvent e){
             switch (gameState){
                 case 0:
                     break;
                 case 1:
-                    choice = "Human Name 1";
-                    button1.setText(choice);
+                    player1.setName("Name 2");
+                    gameStartListener.actionPerformed(doAction);
                     break;
                 case 2:
-                    choice = "Robot Name 1";
-                    button1.setText(choice);
+                    player2.setName("rName 2");
+                    gameStartListener.actionPerformed(doAction);
+                    break;
+                case 3:
+                    player1.turnLeft();
+                    currentScene.pHead.turnLeft();
+                    gameState = 4;
+                    instructions.setText("Good choice, switching to robots turn...");
+                    directions.setText("Game State: " + gameState);
+                    gameGraphics.nextFrame();
+                    input = 2;
+                    gameStartListener.actionPerformed(doAction);
+                    break;
+                case 4:
+                    player2.turnLeft();
+                    gameState = 3;
+                    instructions.setText("Good choice, switching to humans turn...");
+                    directions.setText("Game State: " + gameState);
+                    gameGraphics.nextFrame();
+                    input = 2;
+                    gameStartListener.actionPerformed(doAction);
+                    break;
+                case 5:
+                    input = 0;
                     break;
                 default:
                     break;
@@ -260,18 +275,39 @@ public class Game extends JPanel {
         }
     }
     class ButtonThreeListener implements ActionListener {
-        String choice;
         public void actionPerformed(ActionEvent e){
             switch (gameState){
                 case 0:
                     break;
                 case 1:
-                    choice = "Human Name 1";
-                    button1.setText(choice);
+                    player1.setName("Name 3");
+                    gameStartListener.actionPerformed(doAction);
                     break;
                 case 2:
-                    choice = "Robot Name 1";
-                    button1.setText(choice);
+                    player2.setName("rName 3");
+                    gameStartListener.actionPerformed(doAction);
+                    break;
+                case 3:
+                    player1.turnRight();
+                    currentScene.pHead.turnRight();
+                    gameState = 4;
+                    instructions.setText("Good choice, switching to robots turn...");
+                    directions.setText("Game State: " + gameState);
+                    gameGraphics.nextFrame();
+                    input = 3;
+                    gameStartListener.actionPerformed(doAction);
+                    break;
+                case 4:
+                    player2.turnRight();
+                    gameState = 3;
+                    instructions.setText("Good choice, switching to humans turn...");
+                    directions.setText("Game State: " + gameState);
+                    gameGraphics.nextFrame();
+                    input = 3;
+                    gameStartListener.actionPerformed(doAction);
+                    break;
+                case 5:
+                    input = 0;
                     break;
                 default:
                     break;
@@ -279,18 +315,39 @@ public class Game extends JPanel {
         }
     }
     class ButtonFourListener implements ActionListener {
-        String choice;
         public void actionPerformed(ActionEvent e){
             switch (gameState){
                 case 0:
                     break;
                 case 1:
-                    choice = "Human Name 1";
-                    button1.setText(choice);
+                    player1.setName("Name 4");
+                    gameStartListener.actionPerformed(doAction);
                     break;
                 case 2:
-                    choice = "Robot Name 1";
-                    button1.setText(choice);
+                    player2.setName("rName 4");
+                    gameStartListener.actionPerformed(doAction);
+                    break;
+                case 3:
+                    player1.turnAround();
+                    currentScene.pHead.turnAround();
+                    gameState = 4;
+                    instructions.setText("Good choice, switching to robots turn...");
+                    directions.setText("Game State: " + gameState);
+                    gameGraphics.nextFrame();
+                    input = 4;
+                    gameStartListener.actionPerformed(doAction);
+                    break;
+                case 4:
+                    player2.turnAround();
+                    gameState = 3;
+                    instructions.setText("Good choice, switching to humans turn...");
+                    directions.setText("Game State: " + gameState);
+                    gameGraphics.nextFrame();
+                    input = 4;
+                    gameStartListener.actionPerformed(doAction);
+                    break;
+                case 5:
+                    input = 0;
                     break;
                 default:
                     break;
@@ -298,22 +355,43 @@ public class Game extends JPanel {
         }
     }
     class ButtonFiveListener implements ActionListener {
-        String choice;
         public void actionPerformed(ActionEvent e){
             switch (gameState){
                 case 0:
                     break;
                 case 1:
-                    choice = "Human Name 1";
-                    button1.setText(choice);
+                    player1.setName("Name 5");
+                    gameStartListener.actionPerformed(doAction);
                     break;
                 case 2:
-                    choice = "Robot Name 1";
-                    button1.setText(choice);
+                    player2.setName("rName 5");
+                    gameStartListener.actionPerformed(doAction);
+                    break;
+                case 3:
+                    whoseTurn().attack(whoseTurn(), new Weapon());
+                    gameState = 4;
+                    instructions.setText("Good choice, switching to robots turn...");
+                    directions.setText("Game State: " + gameState);
+                    gameGraphics.nextFrame();
+                    input = 5;
+                    gameStartListener.actionPerformed(doAction);
+                    break;
+                case 4:
+                    whoseTurn().attack(whoseTurn(), new Weapon());
+                    gameState = 3;
+                    instructions.setText("Good choice, switching to humans turn...");
+                    directions.setText("Game State: " + gameState);
+                    gameGraphics.nextFrame();
+                    input = 5;
+                    gameStartListener.actionPerformed(doAction);
+                    break;
+                case 5:
+                    input = 0;
                     break;
                 default:
                     break;
             }
         }
     }
+
 }

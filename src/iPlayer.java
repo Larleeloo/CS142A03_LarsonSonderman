@@ -10,10 +10,14 @@ public interface iPlayer {
     int[] stats = new int[10];
     int xCoords = 0;
     int yCoords = 0;
-
-    int direction = 1;
+    int xBoardCoords = 0;
+    int yBoardCoords = 0;
     public String getName();
     public Player getNext();
+    int getxGraphicalCoords();
+    int getyGraphicalCoords();
+    int getxBoardCoords();
+    int getyBoardCoords();
 
     public Player getPrev();
     public int getInventorySize();
@@ -29,7 +33,8 @@ public interface iPlayer {
 
     public void setName(String name);
     public Player setNext(Player playerIn);
-
+    public void setPos(int x, int y);
+    public void setBoardPos(int x, int y);
     public Player setPrev(Player playerIn);
     public int setInventorySize(int size);
     public int setData(int dataIn);
@@ -41,8 +46,13 @@ public interface iPlayer {
     public Item setInentorySlot(int index, Item itemIn);
 
     public int setStatIndex(int index, int value);
-    public int changeDir(char dir);
+    public void turnLeft();
+    public void turnRight();
+    public void turnAround();
     public void moveForward(int steps);
+    public boolean checkOnBoardX();
+    public boolean checkOnBoardY();
     public int[] attack(Player player, Weapon weapon);
+
 
 }

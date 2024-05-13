@@ -18,4 +18,15 @@ public class GenerateEntities {
         }
         return broadswords;
     }
+    public static Scene[] createScenes(int count, int size) throws IOException {
+        Scene[] scenes = new Scene[count];
+        for (int i = 0; i < count; i++) {
+            scenes[i] = new Scene(size);
+        }
+        return scenes;
+    }
+    public static Scene createScene(int size) throws IOException {
+        Scene scene = new Scene(size);
+        return scene;
+    }
 }

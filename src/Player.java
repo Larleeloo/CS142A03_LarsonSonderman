@@ -1,8 +1,13 @@
-import java.awt.*;
 import java.util.Random;
 
 public class Player implements iPlayer{
     String name;
+    private enum role{
+        GOBLIN,
+        KNIGHT
+    };
+
+    role pRoll;
     Player next;
     Player prev;
     int data;
@@ -11,13 +16,23 @@ public class Player implements iPlayer{
     int hp;
     int mp;
     int[] stats = new int[10];
-    int xCoords;
-    int yCoords;
-    int direction;
+    int xGraphicalCoords;
+    int yGraphicalCoords;
+    int xBoardCoords;
+    int yBoardCoords;
+    private enum directions{
+        NORTH,
+        SOUTH,
+        EAST,
+        WEST
+    };
+
+    directions myDir = directions.NORTH;
 
     public Player(){
         data = 0;
         name = "NONE";
+        pRoll = role.KNIGHT;
         inventorySize = 10;
         inventory[0] = new Item();
         hp = 100;
@@ -33,16 +48,20 @@ public class Player implements iPlayer{
         stats[8] = 7; //confidence
         stats[9] = 7; //other
 
-        xCoords = 0;
-        yCoords = 0;
+        xBoardCoords = 0;
+        yBoardCoords = 0;
+        xGraphicalCoords = (72 * xBoardCoords) + 12;
+        yGraphicalCoords = (72 * yBoardCoords) + 12;
 
-        direction = 1;
+        myDir = directions.NORTH;
 
     }
-    public Player(int inventorySize, Item[] inventory, int hp, int mp,
+    public Player(String name,int role, int inventorySize, Item[] inventory, int hp, int mp,
                   int otherStat, int strength, int charisma, int wisdom, int intelligence, int dexterity, int constitution, int stamina, int confidence, int speed,
                   int xCoords, int yCoords,
-                  int direction, int data){
+                  int myDir, int data){
+        this.name = name;
+        this.pRoll = roleTranslate(role);
         this.data = data;
         this.inventorySize = inventorySize;
         this.inventory = inventory;
@@ -59,16 +78,22 @@ public class Player implements iPlayer{
         this.stats[8] = confidence;
         this.stats[9] = speed;
 
-        this.xCoords = xCoords;
-        this.yCoords = yCoords;
 
-        this.direction = direction;
+        xBoardCoords = 0;
+        yBoardCoords = 0;
+        this.xGraphicalCoords = (72 * xBoardCoords) + 12;
+        this.yGraphicalCoords = (72 * yBoardCoords) + 12;
+        this.myDir = directionTranslate(myDir);
 
 
+    }
+    public int getRole(){
+        return roleTranslate(pRoll);
     }
     public String getName(){
         return this.name;
     }
+
     public Player getNext(){
         return this.next;
     }
@@ -78,9 +103,17 @@ public class Player implements iPlayer{
     public int getData(){
         return this.data;
     }
-    public int getyCoords(){return this.yCoords;}
-    public int getxCoords(){return this.xCoords;}
-    public int getDirection(){return this.direction;}
+    public int getyGraphicalCoords(){return this.yGraphicalCoords;}
+    public int getxGraphicalCoords(){return this.xGraphicalCoords;}
+    public int getxBoardCoords(){
+        return this.xBoardCoords;
+    }
+    public int getyBoardCoords(){
+        return this.yBoardCoords;
+    }
+    public directions getMyDir(){
+        return this.myDir;
+    }
 
     public int getHP(){
         return this.hp;
@@ -102,6 +135,22 @@ public class Player implements iPlayer{
     }
     public void setName(String name){
         this.name = name;
+    }
+    public void setRole(int intRole){
+        this.pRoll = roleTranslate(intRole);
+    }
+    public void setPos(int x, int y){
+        this.xGraphicalCoords = x;
+        this.yGraphicalCoords = y;
+        this.xBoardCoords = (x - 12) / 72;
+        this.yBoardCoords = (y - 12) / 72;
+    }
+
+    public void setBoardPos(int xBoardCoords, int yBoardCoords){
+        this.yBoardCoords = xBoardCoords;
+        this.yBoardCoords = yBoardCoords;
+        this.xGraphicalCoords = (xBoardCoords * 72) + 12;
+        this.yGraphicalCoords = (yBoardCoords * 72) + 12;
     }
     public Player setNext(Player playerIn){
         this.next = playerIn;
@@ -141,44 +190,146 @@ public class Player implements iPlayer{
         return stats[index];
     }
 
-    public void setPos(int x, int y){
-        this.xCoords = x;
-        this.yCoords = y;
-    }
-    public int changeDir(char dir){
-        switch (dir) {
-            case 'n':
-                this.direction = 1;
-                break;
-            case 's':
-                this.direction = 3;
-                break;
-            case 'e':
-                this.direction = 2;
-                break;
-            case 'w':
-                this.direction = 4;
-                break;
+    public role roleTranslate(int intRole){
+        switch (intRole){
+            case 0:
+                return role.KNIGHT;
+            case 1:
+                return role.GOBLIN;
             default:
-                System.out.println("Error in direction change");
+                System.out.println("Error default role assigned");
+                return role.KNIGHT;
+        }
+
+    }
+    public int roleTranslate(role role){
+        switch (role){
+            case role.KNIGHT:
+                return 0;
+            case role.GOBLIN:
+                return 1;
+            default:
+                return 0;
+        }
+
+    }
+    public directions directionTranslate(int dirInt){
+        switch (dirInt){
+            case 1:
+                return directions.NORTH;
+            case 2:
+                return directions.EAST;
+            case 3:
+                return directions.SOUTH;
+            case 4:
+                return directions.WEST;
+            default:
+                System.out.println("Error in direction translation");
+                return directions.NORTH;
+        }
+    }
+    public int directionTranslate(directions myDir){
+        switch (myDir){
+            case directions.NORTH:
+                return 1;
+            case directions.EAST:
+                return 2;
+            case directions.SOUTH:
+                return 3;
+            case directions.WEST:
+                return 4;
+            default:
+                System.out.println("Error in direction translation");
+                return 1;
+        }
+    }
+    public void turnLeft(){
+        switch (myDir){
+            case directions.NORTH:
+                myDir = directions.WEST;//was north now west
+                break;
+            case directions.SOUTH:
+                myDir = directions.EAST;//was east now north
+                break;
+            case directions.EAST:
+                myDir = directions.NORTH;//was south now east
+                break;
+            case directions.WEST:
+                myDir = directions.SOUTH;//was west now south
                 break;
         }
-        return this.direction;
+    }
+    public void turnRight(){
+        switch (myDir){
+            case directions.NORTH:
+                myDir = directions.EAST;
+                break;
+            case directions.SOUTH:
+                myDir = directions.WEST;
+                break;
+            case directions.EAST:
+                myDir = directions.SOUTH;
+                break;
+            case directions.WEST:
+                myDir = directions.NORTH;
+                break;
+        }
+    }
+    public void turnAround(){
+        switch (myDir){
+            case directions.NORTH:
+                myDir = directions.SOUTH;
+                break;
+            case directions.SOUTH:
+                myDir = directions.NORTH;
+                break;
+            case directions.EAST:
+                myDir = directions.WEST;
+                break;
+            case directions.WEST:
+                myDir = directions.EAST;
+                break;
+        }
     }
 
     public void moveForward(int steps){
-        switch (direction){
-            case 1:
-                this.yCoords += steps;
+        int graphicalSteps = steps * 72;
+        switch (myDir){
+            case directions.NORTH:
+                if(checkOnBoardY()) {
+                    this.yBoardCoords += steps;
+                    this.yGraphicalCoords += graphicalSteps;
+                }
+                else{
+                    System.out.println("Error off board");
+                }
                 break;
-            case 2:
-                this.xCoords += steps;
+            case directions.EAST:
+                if(checkOnBoardX()) {
+                    this.xBoardCoords += steps;
+                    this.xGraphicalCoords += graphicalSteps;
+                }
+                else{
+                    System.out.println("Error off board");
+                }
                 break;
-            case 3:
-                this.yCoords -= steps;
+            case directions.SOUTH:
+                if(checkOnBoardY()) {
+                    this.yBoardCoords -= steps;
+                    this.yGraphicalCoords -= graphicalSteps;
+                }
+                else{
+                    System.out.println("Error off board");
+                }
                 break;
-            case 4:
-                this.xCoords -= steps;
+            case directions.WEST:
+                if(checkOnBoardX()) {
+                    this.xBoardCoords -= steps;
+                    this.xGraphicalCoords -= graphicalSteps;
+                }
+                else{
+                    System.out.println("Error off board");
+                }
                 break;
             default:
                 System.out.println("Error in movement");
@@ -187,26 +338,42 @@ public class Player implements iPlayer{
     }
     public int[] incrementForward(int steps){
         int[] xySteps = new int[2];
-        xySteps[0] = this.getxCoords();
-        xySteps[1] = this.getyCoords();
-        switch (direction){
-            case 1:
-                xySteps[1] = this.yCoords + steps;
+        xySteps[0] = this.getxBoardCoords();
+        xySteps[1] = this.getyBoardCoords();
+        switch (myDir){
+            case NORTH:
+                xySteps[1] = this.yBoardCoords + steps;
                 break;
-            case 2:
-                xySteps[0] = this.xCoords + steps;
+            case EAST:
+                xySteps[0] = this.xBoardCoords + steps;
                 break;
-            case 3:
-                xySteps[1] = this.yCoords - steps;
+            case SOUTH:
+                xySteps[1] = this.yBoardCoords- steps;
                 break;
-            case 4:
-                xySteps[0] = this.xCoords - steps;
+            case WEST:
+                xySteps[0] = this.xBoardCoords - steps;
                 break;
             default:
                 System.out.println("Error in movement");
                 break;
         }
         return xySteps;
+    }
+    public boolean checkOnBoardX(){
+        if(this.incrementForward(1)[0] > 9 || this.incrementForward(1)[0] < 0){
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    public boolean checkOnBoardY(){
+        if(this.incrementForward(1)[1] > 9 || this.incrementForward(1)[1] < 0){
+            return false;
+        }
+        else {
+            return true;
+        }
     }
     public int[] attack(Player player, Weapon weapon){
         int[] fire_solution = new int[3];
@@ -300,7 +467,6 @@ public class Player implements iPlayer{
 
         return fire_solution;
     }
-
     public int rollD20(Player player, int scalerStatIndex){
         //press enter
         return new Random().nextInt(0,20) + player.getStatIndex(scalerStatIndex) - 7;
