@@ -3,7 +3,6 @@ import javax.swing.*;
 import java.io.IOException;
 
 //todo
-//web file locations
 //auto robot turns and disable buttons
 //implement attack detection
 public class Main {

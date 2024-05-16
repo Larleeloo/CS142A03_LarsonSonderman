@@ -18,16 +18,16 @@ public class RenderedBroadsword extends JComponent{
         x = broadsword.getLocationx();
         y = broadsword.getLocationy();
         color = null;
-        file = new File("/Users/sonderman/Desktop/CS142A03_LarsonSonderman/src/stone.png");
-        bufferedImage = ImageIO.read(file);
+        file = new File("https://onedrive.live.com/embed?resid=A9CCCD1B44AAF6AF%2160304&authkey=%21ALrYU85aHk6lDHk&width=44&height=45");
+     //   bufferedImage = ImageIO.read(file);
     }
     public RenderedBroadsword(int x, int y, int diameter, Color color) throws IOException {
         this.x = x;
         this.y = y;
         this.color = color;
 
-        file = new File("C:\\Users\\Larle\\OneDrive\\Desktop\\CS142A03_LarsonSonderman\\src\\stone.png");
-        bufferedImage = ImageIO.read(file);
+        file = new File("https://onedrive.live.com/embed?resid=A9CCCD1B44AAF6AF%2160304&authkey=%21ALrYU85aHk6lDHk&width=44&height=45");
+       // bufferedImage = ImageIO.read(file);
     }
 
     public int getX(){

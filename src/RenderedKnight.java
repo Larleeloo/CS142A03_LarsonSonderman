@@ -4,8 +4,14 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class RenderedKnight {
     private Player knight = new Player();
@@ -21,17 +27,22 @@ public class RenderedKnight {
         x = knight.getxGraphicalCoords();
         y = knight.getxGraphicalCoords();
         color = null;
-        url = new URL("https://media.discordapp.net/attachments/1239441072862531617/1239441185114689598/Goblin1.png?ex=6642ef0e&is=66419d8e&hm=e4658a1fcb4eb8316978eeab205987145d550d274b26b8f93885fa896239e8ce&=&format=webp&quality=lossless&width=76&height=62");
-        //https://drive.google.com/file/d/19koz86bnGgPiYCSSAiyGhD3RoEfYCgx3/view?usp=drive_link
-        //file = new File("/Users/sonderman/Desktop/CS142A03_LarsonSonderman/src/Knight1.png");
-        bufferedImage = ImageIO.read(url);
+
+        ReadableByteChannel rbc = Channels.newChannel(new URL("https://dsm04pap002files.storage.live.com/y4mAH0d1ty_lrzlwGN_gSkKQq4TThmY8TkdIRPJxhCoS4JhRubHDVScAdS9POPthBCSjObaJj2GQghV3MQXer9JIz4arxqGqtwb6rdnIuHRrkjA9-g3mDjUXw07ItPDA2dtN7fdrrf8hUwhMOmQ_ruxFUmXrDd7YMx9kHC1XkCjgqUsuDg4FyiucU_Ota8B0ZZ69tR9kEbycogE52SSfFP65eBawjcFH8cqTdBSJgzxeS8?encodeFailures=1&width=44&height=45").openStream());
+        FileOutputStream fos = new FileOutputStream(".Knight1.png");
+        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+        file = new File(".Knight1.png");
+        bufferedImage = ImageIO.read(file);
     }
     public RenderedKnight(int x, int y, int diameter, Color color) throws IOException {
         this.x = x;
         this.y = y;
         this.color = color;
 
-        file = new File("/Users/sonderman/Desktop/CS142A03_LarsonSonderman/src/Knight1.png");
+        ReadableByteChannel rbc = Channels.newChannel(new URL("https://dsm04pap002files.storage.live.com/y4mAH0d1ty_lrzlwGN_gSkKQq4TThmY8TkdIRPJxhCoS4JhRubHDVScAdS9POPthBCSjObaJj2GQghV3MQXer9JIz4arxqGqtwb6rdnIuHRrkjA9-g3mDjUXw07ItPDA2dtN7fdrrf8hUwhMOmQ_ruxFUmXrDd7YMx9kHC1XkCjgqUsuDg4FyiucU_Ota8B0ZZ69tR9kEbycogE52SSfFP65eBawjcFH8cqTdBSJgzxeS8?encodeFailures=1&width=44&height=45").openStream());
+        FileOutputStream fos = new FileOutputStream(".Knight1.png");
+        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+        file = new File(".Knight1.png");
         bufferedImage = ImageIO.read(file);
     }
 
