@@ -8,11 +8,11 @@ public interface iEntityControlManager {
     Scene bHead = null;
     int bSize = 0;
     public void nInsert(int data);
-    public Player pInsert();
-    public Player pInsert(String name,int role ,int inventorySize, Item[] inventory, int hp, int mp,
-                        int otherStat, int strength, int charisma, int wisdom, int intelligence, int dexterity, int constitution, int stamina, int confidence, int speed,
-                        int xCoords, int yCoords,
-                        int direction, int data);
+    public Player pCreateOnList();
+    public Player pCreateOnList(String name, int role , int inventorySize, Item[] inventory, int hp, int mp,
+                                int otherStat, int strength, int charisma, int wisdom, int intelligence, int dexterity, int constitution, int stamina, int confidence, int speed,
+                                int xCoords, int yCoords,
+                                int direction, int data);
     public void iInsert();
     public void iInsert(int data, Player owner, int locationx, int locationy, String effect);
     public void iInsert(int data, Player owner, int locationx, int locationy, String effect1, String effect2, String effect3, String effect4, String effect5);

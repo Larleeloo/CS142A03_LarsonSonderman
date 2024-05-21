@@ -13,9 +13,8 @@ public class Scene extends EntityControlManager {
 
     public void updateScene(){
         System.out.println("Scene Update");
-        knight.setDirection(pHead, pHead.directionTranslate(pHead.getMyDir()));
-        knight.setX(pHead.getxGraphicalCoords());
-        knight.setY(pHead.getyGraphicalCoords());
+        //knight.setDirection(pHead, pHead.directionTranslate(pHead.getMyDir()));
+        //knight.setBoardPos(pHead.getxBoardCoords(), pHead.getyBoardCoords());
         goblin.setX(pHead.next.getxGraphicalCoords());
         goblin.setY(pHead.next.getyGraphicalCoords());
     }

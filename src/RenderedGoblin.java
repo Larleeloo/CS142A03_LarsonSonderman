@@ -22,10 +22,8 @@ public class RenderedGoblin {
         x = goblin.getxGraphicalCoords();
         y = goblin.getxGraphicalCoords();
         color = null;
-        ReadableByteChannel rbc = Channels.newChannel(new URL("https://dsm04pap002files.storage.live.com/y4meZUzt7R0YSV6UfL5khnAPUAKlNgLH1inbEGm6TuyAgg7Oz9byXF9Gr5blyIlyW6xPNEcR4XSc70jdF8OZCwPAdu8rp0LqCume87NTrd6gmFaYaaBMoQJzc0dm8TLo8E5Tf_GlRKdeN1u64S0VfWSj2W5lWRUWMIbKOYc4GQ-ZBSoRIXBEjCym2ExMkxarR32e1NK0QyUX_FDgLdh_lHbkPbJ2v9rcZP7HnheEgwkea8?encodeFailures=1&width=38&height=31").openStream());
-        FileOutputStream fos = new FileOutputStream(".Goblin1.png");
-        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-        file = new File(".Goblin1.png");
+
+        file = new File("Goblin1.png");
         bufferedImage = ImageIO.read(file);
     }
     public RenderedGoblin(int x, int y, int diameter, Color color) throws IOException {
@@ -33,10 +31,7 @@ public class RenderedGoblin {
         this.y = y;
         this.color = color;
 
-        ReadableByteChannel rbc = Channels.newChannel(new URL("https://dsm04pap002files.storage.live.com/y4meZUzt7R0YSV6UfL5khnAPUAKlNgLH1inbEGm6TuyAgg7Oz9byXF9Gr5blyIlyW6xPNEcR4XSc70jdF8OZCwPAdu8rp0LqCume87NTrd6gmFaYaaBMoQJzc0dm8TLo8E5Tf_GlRKdeN1u64S0VfWSj2W5lWRUWMIbKOYc4GQ-ZBSoRIXBEjCym2ExMkxarR32e1NK0QyUX_FDgLdh_lHbkPbJ2v9rcZP7HnheEgwkea8?encodeFailures=1&width=38&height=31").openStream());
-        FileOutputStream fos = new FileOutputStream(".Goblin1.png");
-        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-        file = new File(".Goblin1.png");
+        file = new File("Goblin1.png");
         bufferedImage = ImageIO.read(file);
     }
 

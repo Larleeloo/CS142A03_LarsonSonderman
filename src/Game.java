@@ -16,7 +16,7 @@ public class Game extends JPanel {
     JButton button3 = new JButton("Button 3");
     JButton button4 = new JButton("Button 4");
     JButton button5 = new JButton("Button 5");
-    private JButton gameStartButton = new JButton("Next Frame");
+    private JButton gameStartButton = new JButton("PLAY");
     GameGraphics gameGraphics;
     //******Game stuff
     int aiType;
@@ -37,8 +37,8 @@ public class Game extends JPanel {
     ActionEvent doAction = new ActionEvent(this, 1, "COMMAND1");
     public Game(int landArea) throws IOException {
         currentScene = GenerateEntities.createScene(10);
-        player1 = currentScene.pInsert();
-        player2 = currentScene.pInsert();
+        player1 = currentScene.pCreateOnList();
+        player2 = currentScene.pCreateOnList();
         player2.setRole(1);
         this.gameGraphics = new GameGraphics(currentScene);
         this.setPreferredSize(new Dimension(1920,1080));
@@ -112,7 +112,7 @@ public class Game extends JPanel {
             gameState = 3;
         } else {
             instructions.setText("Robot starts... Choose an action!");
-             gameState = 4;
+            gameState = 4;
         }
         turnCounter = 1;
         gameGraphics.nextFrame();
@@ -210,6 +210,7 @@ public class Game extends JPanel {
                     break;
                 case 3:
                     player1.moveForward(1);
+                    currentScene.knight.moveForward(1);
                     gameState = 4;
                     instructions.setText("Good choice, switching to robots turn...");
                     directions.setText("Game State: " + gameState);
@@ -249,7 +250,6 @@ public class Game extends JPanel {
                     break;
                 case 3:
                     player1.turnLeft();
-                    currentScene.pHead.turnLeft();
                     gameState = 4;
                     instructions.setText("Good choice, switching to robots turn...");
                     directions.setText("Game State: " + gameState);
@@ -289,7 +289,6 @@ public class Game extends JPanel {
                     break;
                 case 3:
                     player1.turnRight();
-                    currentScene.pHead.turnRight();
                     gameState = 4;
                     instructions.setText("Good choice, switching to robots turn...");
                     directions.setText("Game State: " + gameState);
@@ -329,7 +328,6 @@ public class Game extends JPanel {
                     break;
                 case 3:
                     player1.turnAround();
-                    currentScene.pHead.turnAround();
                     gameState = 4;
                     instructions.setText("Good choice, switching to robots turn...");
                     directions.setText("Game State: " + gameState);

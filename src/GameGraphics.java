@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
 
@@ -14,7 +12,7 @@ public class GameGraphics extends JComponent {
 
     public void paintComponent(Graphics g){
         paintBackground(g, currentScene.background);
-        paintPlayer1(g, currentScene.knight, currentScene.knight.getX(), currentScene.knight.getY());
+        paintPlayer1(g, currentScene.knight, currentScene.knight.getxGraphicalCoords(), currentScene.knight.getyGraphicalCoords());
         paintPlayer2(g, currentScene.goblin,  currentScene.goblin.getX(),  currentScene.goblin.getY());
     }
 

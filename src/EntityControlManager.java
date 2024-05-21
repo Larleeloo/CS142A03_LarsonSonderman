@@ -36,7 +36,7 @@ public class EntityControlManager implements iEntityControlManager {
    }
 
    //blank player added to end of doubly list
-   public Player pInsert() {
+   public Player pCreateOnList() {
       Player new_player = new Player();
       if (this.pHead == null) {
          this.pHead = new_player;
@@ -49,7 +49,7 @@ public class EntityControlManager implements iEntityControlManager {
    }
 
    //inserts player with all parameters
-   public Player pInsert(String name, int role, int inventorySize, Item[] inventory, int hp, int mp,
+   public Player pCreateOnList(String name, int role, int inventorySize, Item[] inventory, int hp, int mp,
                          int otherStat, int strength, int charisma, int wisdom, int intelligence, int dexterity, int constitution, int stamina, int confidence, int speed,
                          int xCoords, int yCoords,
                          int direction, int data) {

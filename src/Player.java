@@ -7,7 +7,7 @@ public class Player implements iPlayer{
         KNIGHT
     };
 
-    role pRoll;
+    role pRole;
     Player next;
     Player prev;
     int data;
@@ -32,7 +32,7 @@ public class Player implements iPlayer{
     public Player(){
         data = 0;
         name = "NONE";
-        pRoll = role.KNIGHT;
+        pRole = role.KNIGHT;
         inventorySize = 10;
         inventory[0] = new Item();
         hp = 100;
@@ -61,7 +61,7 @@ public class Player implements iPlayer{
                   int xCoords, int yCoords,
                   int myDir, int data){
         this.name = name;
-        this.pRoll = roleTranslate(role);
+        this.pRole = roleTranslate(role);
         this.data = data;
         this.inventorySize = inventorySize;
         this.inventory = inventory;
@@ -88,7 +88,7 @@ public class Player implements iPlayer{
 
     }
     public int getRole(){
-        return roleTranslate(pRoll);
+        return roleTranslate(pRole);
     }
     public String getName(){
         return this.name;
@@ -137,7 +137,7 @@ public class Player implements iPlayer{
         this.name = name;
     }
     public void setRole(int intRole){
-        this.pRoll = roleTranslate(intRole);
+        this.pRole = roleTranslate(intRole);
     }
     public void setPos(int x, int y){
         this.xGraphicalCoords = x;
