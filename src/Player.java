@@ -1,6 +1,20 @@
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Random;
 
 public class Player implements iPlayer{
+
+    private int diameter;
+    private Color color;
+    private File file;
+    private URL url;
+    private BufferedImage bufferedImage;
+
     String name;
     private enum role{
         GOBLIN,
@@ -29,7 +43,12 @@ public class Player implements iPlayer{
 
     directions myDir = directions.NORTH;
 
-    public Player(){
+    public Player() throws IOException {
+
+        this.color = null;
+        file = new File("Knight1.png");
+        bufferedImage = ImageIO.read(file);
+
         data = 0;
         name = "NONE";
         pRole = role.KNIGHT;
@@ -59,7 +78,13 @@ public class Player implements iPlayer{
     public Player(String name,int role, int inventorySize, Item[] inventory, int hp, int mp,
                   int otherStat, int strength, int charisma, int wisdom, int intelligence, int dexterity, int constitution, int stamina, int confidence, int speed,
                   int xCoords, int yCoords,
-                  int myDir, int data){
+                  int myDir, int data, int boardDiameter) throws IOException {
+
+        this.diameter = boardDiameter;
+        this.color = color;
+        file = new File("Knight1.png");
+        bufferedImage = ImageIO.read(file);
+
         this.name = name;
         this.pRole = roleTranslate(role);
         this.data = data;
@@ -471,4 +496,78 @@ public class Player implements iPlayer{
         //press enter
         return new Random().nextInt(0,20) + player.getStatIndex(scalerStatIndex) - 7;
     }
+
+
+    public int getDiameter(){
+        return this.diameter;
+    }
+    public Color getColor(){
+        return this.color;
+    }
+    public File getFile(){
+        return this.file;
+    }
+    public BufferedImage getBufferedImage(){
+        return this.bufferedImage;
+    }
+    public void setDiameter(int diameter){
+        this.diameter = diameter;
+    }
+    public void setColor(Color color){
+        this.color = color;
+    }
+    public void setFile(File file){
+        this.file = file;
+    }
+    public void setBufferedImage(BufferedImage bufferedImage){
+        this.bufferedImage = bufferedImage;
+    }
+    public void moveOne(){
+        this.moveForward(1);
+    }
+
+    public BufferedImage setDirection(Player player, int direction){
+        switch (direction){
+            case 1:
+                break;
+            case 2:
+                bufferedImage = rotateImageByDegrees(bufferedImage,90);
+                break;
+            case 3:
+                bufferedImage = rotateImageByDegrees(bufferedImage,180);
+                break;
+            case 4:
+                bufferedImage = rotateImageByDegrees(bufferedImage,270);
+                break;
+            default:
+                System.out.println("Error in set render direction");
+                break;
+        }
+        return bufferedImage;
+    }
+    public static BufferedImage rotateImageByDegrees(BufferedImage img, double angle) {
+        double rads = Math.toRadians(angle);
+        double sin = Math.abs(Math.sin(rads)), cos = Math.abs(Math.cos(rads));
+        int w = img.getWidth();
+        int h = img.getHeight();
+        int newWidth = (int) Math.floor(w * cos + h * sin);
+        int newHeight = (int) Math.floor(h * cos + w * sin);
+
+        BufferedImage rotated = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = rotated.createGraphics();
+        AffineTransform at = new AffineTransform();
+        at.translate((newWidth - w) / 2, (newHeight - h) / 2);
+
+        int x = w / 2;
+        int y = h / 2;
+
+        at.rotate(rads, x, y);
+        g2d.setTransform(at);
+        g2d.drawImage(img, 0, 0, null);
+        g2d.dispose();
+
+        return rotated;
+    }
+
+
 }

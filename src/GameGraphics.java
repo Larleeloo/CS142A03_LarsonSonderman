@@ -12,18 +12,18 @@ public class GameGraphics extends JComponent {
 
     public void paintComponent(Graphics g){
         paintBackground(g, currentScene.background);
-        paintPlayer1(g, currentScene.knight, currentScene.knight.getxGraphicalCoords(), currentScene.knight.getyGraphicalCoords());
-        paintPlayer2(g, currentScene.goblin,  currentScene.goblin.getX(),  currentScene.goblin.getY());
+        paintPlayer1(g, currentScene.pHead, currentScene.pHead.getxGraphicalCoords(), currentScene.pHead.getyGraphicalCoords());
+        paintPlayer2(g, currentScene.pHead.next,  currentScene.pHead.next.getxGraphicalCoords(),  currentScene.pHead.next.getyGraphicalCoords());
     }
 
     public void nextFrame() {
         repaint();
     }
-    public void paintPlayer1(Graphics g, RenderedKnight player1, int x, int y){
-        g.drawImage(player1.getBufferedImage(), x, y, null);
+    public void paintPlayer1(Graphics g, Player player1, int xGraphicalCoords, int yGraphicalCoords){
+        g.drawImage(player1.getBufferedImage(), xGraphicalCoords, yGraphicalCoords, null);
     }
-    public void paintPlayer2(Graphics g, RenderedGoblin player2, int x, int y){
-        g.drawImage(player2.getBufferedImage(), x, y, null);
+    public void paintPlayer2(Graphics g, Player player2, int xGraphicalCoords, int yGraphicalCoords){
+        g.drawImage(player2.getBufferedImage(), xGraphicalCoords, yGraphicalCoords, null);
     }
 
     public void paintBroadswords(Graphics g, RenderedBroadsword[] broadswords){

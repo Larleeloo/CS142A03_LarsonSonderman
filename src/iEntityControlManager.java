@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 public interface iEntityControlManager {
     Node head = null;
     int size = 0;
@@ -8,11 +10,11 @@ public interface iEntityControlManager {
     Scene bHead = null;
     int bSize = 0;
     public void nInsert(int data);
-    public Player pCreateOnList();
+    public Player pCreateOnList() throws IOException;
     public Player pCreateOnList(String name, int role , int inventorySize, Item[] inventory, int hp, int mp,
                                 int otherStat, int strength, int charisma, int wisdom, int intelligence, int dexterity, int constitution, int stamina, int confidence, int speed,
                                 int xCoords, int yCoords,
-                                int direction, int data);
+                                int direction, int data, int boardDiameter) throws IOException;
     public void iInsert();
     public void iInsert(int data, Player owner, int locationx, int locationy, String effect);
     public void iInsert(int data, Player owner, int locationx, int locationy, String effect1, String effect2, String effect3, String effect4, String effect5);
@@ -22,19 +24,14 @@ public interface iEntityControlManager {
     public void changeStat(int pIndex, int statIndex, int statChange);
     public void printList();
     public void pUpdate();
-
-    public void pPush(Player p);
+    public void pPushExisting(Player p);
+    public void pPushNew(Player p);
     public void pSwap(int player1Index, int player2Index);
     public void sortByHighestStatX(int x);
-
     public void pPrintStats();
-
     public void pAddToInventory(int pIndex, int slot, Item item);
-
     public int pCountInventoryItems(Item item, int pIndex);
-
     public void pPrintInventory(int pIndex);
-
     public boolean containsPlayerAtPos(int x, int y);
 
 }

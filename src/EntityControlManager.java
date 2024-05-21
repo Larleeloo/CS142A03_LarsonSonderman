@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.io.IOException;
 
 public class EntityControlManager implements iEntityControlManager {
    Node head;
@@ -11,12 +12,12 @@ public class EntityControlManager implements iEntityControlManager {
    int bSize = 0;
 
    //Nodes in this case pertain only to world data and are therefore the only code initialized in each constructor
-   public EntityControlManager(Graphics mainGraphics) {
+   public EntityControlManager(Graphics mainGraphics) throws IOException {
       this.head = new Node();
       this.size++;
    }
 
-   public EntityControlManager(int worldData) {
+   public EntityControlManager(int worldData) throws IOException {
       this.head = new Node(worldData);
       this.size++;
    }
@@ -36,7 +37,7 @@ public class EntityControlManager implements iEntityControlManager {
    }
 
    //blank player added to end of doubly list
-   public Player pCreateOnList() {
+   public Player pCreateOnList() throws IOException {
       Player new_player = new Player();
       if (this.pHead == null) {
          this.pHead = new_player;
@@ -52,10 +53,10 @@ public class EntityControlManager implements iEntityControlManager {
    public Player pCreateOnList(String name, int role, int inventorySize, Item[] inventory, int hp, int mp,
                          int otherStat, int strength, int charisma, int wisdom, int intelligence, int dexterity, int constitution, int stamina, int confidence, int speed,
                          int xCoords, int yCoords,
-                         int direction, int data) {
+                         int direction, int data, int boardDiameter) throws IOException {
       Player new_player = new Player(name, role, inventorySize, inventory, hp, mp,
               otherStat, strength, charisma, wisdom, intelligence, dexterity, constitution, stamina, confidence, speed,
-              xCoords, yCoords, direction, data);
+              xCoords, yCoords, direction, data, boardDiameter);
       if (this.pHead == null) {
          this.pHead = new_player;
       } else {
@@ -139,7 +140,7 @@ public class EntityControlManager implements iEntityControlManager {
       }
    }
 
-   public void pPush(Player p) {
+   public void pPushExisting(Player p) {
       if (p != this.pHead) {
          p.prev.next = p.next;
          p.next = pHead;
@@ -147,6 +148,13 @@ public class EntityControlManager implements iEntityControlManager {
          pHead = p;
          pHead.next.prev = p;
       }
+   }
+   public void pPushNew(Player p){
+      Player temp;
+      temp = pHead;
+      pHead = p;
+      pHead.next = temp;
+      pUpdate();
    }
 
    public void pSwap(int player1Index, int player2Index) {
@@ -176,7 +184,7 @@ public class EntityControlManager implements iEntityControlManager {
                }
                indexIn++;
             }
-            pPush(pTraverseForward(indexOf));
+            pPushExisting(pTraverseForward(indexOf));
             indexOut++;
             playerOut = pTraverseForward(indexOut);
             pUpdate();

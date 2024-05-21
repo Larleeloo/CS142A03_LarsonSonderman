@@ -26,8 +26,8 @@ public class Game extends JPanel {
     private boolean gameStarted = false;
     private int turnCounter = 0;
     Scene currentScene;
-    Player player1;
-    Player player2;
+    Player player1 = new Knight();
+    Player player2 = new Goblin();
     ButtonOneListener buttonOneListener = new ButtonOneListener();
     ButtonTwoListener buttonTwoListener = new ButtonTwoListener();
     ButtonThreeListener buttonThreeListener = new ButtonThreeListener();
@@ -37,8 +37,8 @@ public class Game extends JPanel {
     ActionEvent doAction = new ActionEvent(this, 1, "COMMAND1");
     public Game(int landArea) throws IOException {
         currentScene = GenerateEntities.createScene(10);
-        player1 = currentScene.pCreateOnList();
-        player2 = currentScene.pCreateOnList();
+        currentScene.pPushNew(player2);
+        currentScene.pPushNew(player1);
         player2.setRole(1);
         this.gameGraphics = new GameGraphics(currentScene);
         this.setPreferredSize(new Dimension(1920,1080));
@@ -99,7 +99,7 @@ public class Game extends JPanel {
         return player1;
     }
     private Player initializeComputer(){
-        instructions.setText("Who would you like to play against?\nThis is your opponent... choose wisely");
+        instructions.setText("Who would you like to play against? This is your opponent... choose wisely");
         player2.setRole(1);
         gameGraphics.nextFrame();
         gameState = 2;
@@ -165,7 +165,6 @@ public class Game extends JPanel {
                     button3.setText("Turn Right");
                     button4.setText("Turn Around");
                     button5.setText("Attack");
-                    currentScene.updateScene();
                     gameGraphics.nextFrame();
                     takeTurn();
                     input = 0;
@@ -176,7 +175,6 @@ public class Game extends JPanel {
                     button3.setText("Turn Right");
                     button4.setText("Turn Around");
                     button5.setText("Attack");
-                    currentScene.updateScene();
                     gameGraphics.nextFrame();
                     takeTurn();
                     input = 0;
@@ -210,7 +208,6 @@ public class Game extends JPanel {
                     break;
                 case 3:
                     player1.moveForward(1);
-                    currentScene.knight.moveForward(1);
                     gameState = 4;
                     instructions.setText("Good choice, switching to robots turn...");
                     directions.setText("Game State: " + gameState);
