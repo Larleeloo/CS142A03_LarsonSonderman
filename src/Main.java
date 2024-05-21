@@ -10,6 +10,7 @@ import java.io.IOException;
 //implement Giant
 public class Main {
     public static void main(String[] args) throws IOException {
+        //test
         JFrame frame = new JFrame();
         JPanel heroesAndMonsters = new Game(1);
 
