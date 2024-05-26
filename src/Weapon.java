@@ -1,11 +1,17 @@
 public class Weapon extends Item{
     int damage;
     int range;
-    int scalerIndex;
+    int scalarIndex;
     public Weapon(){
         super();
         damage = 1;
         range = 1; // melee
-        scalerIndex = 1; //strength
+        scalarIndex = 1; //strength
+    }
+    public Weapon(int data, Player owner, int locationx, int locationy, String effect){
+        super(data, owner, locationx, locationy, effect);
+        damage = 1;
+        range = 1; // melee
+        scalarIndex = 1; //strength
     }
 }

@@ -26,12 +26,11 @@ public interface iEntityControlManager {
     public void pUpdate();
     public void pPushExisting(Player p);
     public void pPushNew(Player p);
-    public void pSwap(int player1Index, int player2Index);
-    public void sortByHighestStatX(int x);
+    public void pSortByHighestStatX(int x);
     public void pPrintStats();
     public void pAddToInventory(int pIndex, int slot, Item item);
     public int pCountInventoryItems(Item item, int pIndex);
     public void pPrintInventory(int pIndex);
-    public boolean containsPlayerAtPos(int x, int y);
+    public boolean pContainsPlayerAtPos(int x, int y);
 
 }

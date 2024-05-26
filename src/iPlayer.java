@@ -18,19 +18,13 @@ public interface iPlayer {
     int getyGraphicalCoords();
     int getxBoardCoords();
     int getyBoardCoords();
-
     public Player getPrev();
     public int getInventorySize();
     public int getData();
-
     public int getHP();
-
     public int getMP();
-
     public Item getInentorySlot(int index);
-
     public int getStatIndex(int index);
-
     public void setName(String name);
     public Player setNext(Player playerIn);
     public void setPos(int x, int y);
@@ -38,13 +32,9 @@ public interface iPlayer {
     public Player setPrev(Player playerIn);
     public int setInventorySize(int size);
     public int setData(int dataIn);
-
     public int setHP(int HPIn);
-
     public int setMP(int MPIn);
-
     public Item setInentorySlot(int index, Item itemIn);
-
     public int setStatIndex(int index, int value);
     public void turnLeft();
     public void turnRight();
@@ -52,7 +42,7 @@ public interface iPlayer {
     public void moveForward(int steps);
     public boolean checkOnBoardX();
     public boolean checkOnBoardY();
-    public int[] attack(Player player, Weapon weapon);
+    public int[] attack(Player playerAttacked, Weapon weapon);
 
 
 }

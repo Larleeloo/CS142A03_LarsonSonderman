@@ -12,8 +12,10 @@ public class GameGraphics extends JComponent {
 
     public void paintComponent(Graphics g){
         paintBackground(g, currentScene.background);
-        paintPlayer1(g, currentScene.pHead, currentScene.pHead.getxGraphicalCoords(), currentScene.pHead.getyGraphicalCoords());
-        paintPlayer2(g, currentScene.pHead.next,  currentScene.pHead.next.getxGraphicalCoords(),  currentScene.pHead.next.getyGraphicalCoords());
+        if(currentScene.pHead != null && currentScene.pHead.next != null) {
+            paintPlayer1(g, currentScene.pHead, currentScene.pHead.getxGraphicalCoords(), currentScene.pHead.getyGraphicalCoords());
+            paintPlayer2(g, currentScene.pHead.next, currentScene.pHead.next.getxGraphicalCoords(), currentScene.pHead.next.getyGraphicalCoords());
+        }
     }
 
     public void nextFrame() {
@@ -24,12 +26,6 @@ public class GameGraphics extends JComponent {
     }
     public void paintPlayer2(Graphics g, Player player2, int xGraphicalCoords, int yGraphicalCoords){
         g.drawImage(player2.getBufferedImage(), xGraphicalCoords, yGraphicalCoords, null);
-    }
-
-    public void paintBroadswords(Graphics g, RenderedBroadsword[] broadswords){
-        for (RenderedBroadsword broadsword : broadswords) {
-            g.drawImage(broadsword.getBufferedImage(), broadsword.getX(), broadsword.getY(), null);
-        }
     }
 
     public void paintBackground(Graphics g, RenderedBackground background){

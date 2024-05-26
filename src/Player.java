@@ -4,7 +4,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Random;
 
 public class Player implements iPlayer{
@@ -12,7 +11,6 @@ public class Player implements iPlayer{
     private int diameter;
     private Color color;
     private File file;
-    private URL url;
     private BufferedImage bufferedImage;
 
     String name;
@@ -27,7 +25,9 @@ public class Player implements iPlayer{
     int data;
     int inventorySize = 0;
     Item[] inventory = new Item[63];
+    Weapon weapon;
     int hp;
+    boolean alive;
     int mp;
     int[] stats = new int[10];
     int xGraphicalCoords;
@@ -45,6 +45,7 @@ public class Player implements iPlayer{
 
     public Player() throws IOException {
 
+        this.alive = true;
         this.color = null;
         file = new File("Knight1.png");
         bufferedImage = ImageIO.read(file);
@@ -53,8 +54,8 @@ public class Player implements iPlayer{
         name = "NONE";
         pRole = role.KNIGHT;
         inventorySize = 10;
-        inventory[0] = new Item();
-        hp = 100;
+        inventory[0] = new Weapon(0, this, this.xBoardCoords, this.yBoardCoords, "Melee");
+        hp = 10;
         mp = 100;
         stats[0] = 7; //speed
         stats[1] = 7; //strength
@@ -91,6 +92,7 @@ public class Player implements iPlayer{
         this.inventorySize = inventorySize;
         this.inventory = inventory;
         this.hp = hp;
+        this.alive = this.hp > 0;
         this.mp = mp;
         this.stats[0] = otherStat;
         this.stats[1] = strength;
@@ -136,8 +138,8 @@ public class Player implements iPlayer{
     public int getyBoardCoords(){
         return this.yBoardCoords;
     }
-    public directions getMyDir(){
-        return this.myDir;
+    public int getMyDir(){
+        return directionTranslate(this.myDir);
     }
 
     public int getHP(){
@@ -158,6 +160,25 @@ public class Player implements iPlayer{
     public int getStatIndex(int index){
         return this.stats[index];
     }
+    public void setNull(){
+        this.alive = false;
+        this.color = null;
+        file = null;
+        bufferedImage = null;
+        data = 0;
+        name = null;
+        pRole = null;
+        inventorySize = 0;
+        inventory = null;
+        hp = 0;
+        mp = 0;
+        stats = null;
+        xBoardCoords = 0;
+        yBoardCoords = 0;
+        xGraphicalCoords = 0;
+        yGraphicalCoords = 0;
+
+    }
     public void setName(String name){
         this.name = name;
     }
@@ -172,7 +193,7 @@ public class Player implements iPlayer{
     }
 
     public void setBoardPos(int xBoardCoords, int yBoardCoords){
-        this.yBoardCoords = xBoardCoords;
+        this.xBoardCoords = xBoardCoords;
         this.yBoardCoords = yBoardCoords;
         this.xGraphicalCoords = (xBoardCoords * 72) + 12;
         this.yGraphicalCoords = (yBoardCoords * 72) + 12;
@@ -213,6 +234,10 @@ public class Player implements iPlayer{
     public int setStatIndex(int index, int value){
         this.stats[index] = value;
         return stats[index];
+    }
+
+    public void setmyDir(int myDir){
+        this.myDir = directionTranslate(myDir);
     }
 
     public role roleTranslate(int intRole){
@@ -268,53 +293,93 @@ public class Player implements iPlayer{
                 return 1;
         }
     }
+    public boolean checkAlive(){
+        if(this.hp <= 0){
+            this.alive = false;
+            this.bufferedImage = null;
+        }
+        return this.alive;
+    }
+
     public void turnLeft(){
         switch (myDir){
             case directions.NORTH:
+                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 0);
                 myDir = directions.WEST;//was north now west
                 break;
             case directions.SOUTH:
+                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 180);
                 myDir = directions.EAST;//was east now north
                 break;
             case directions.EAST:
+                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), -90);
                 myDir = directions.NORTH;//was south now east
                 break;
             case directions.WEST:
+                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 90);
                 myDir = directions.SOUTH;//was west now south
+                break;
+        }
+        pUpdateGraphicalDirections();
+    }
+
+    public void pUpdateGraphicalDirections(){
+        switch (myDir){
+            case directions.NORTH:
+                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 0);
+                break;
+            case directions.SOUTH:
+                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 180);
+                break;
+            case directions.EAST:
+                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 90);
+                break;
+            case directions.WEST:
+                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), -90);
                 break;
         }
     }
     public void turnRight(){
         switch (myDir){
             case directions.NORTH:
+                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 0);
                 myDir = directions.EAST;
                 break;
             case directions.SOUTH:
+                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 180);
                 myDir = directions.WEST;
                 break;
             case directions.EAST:
+                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), -90);
                 myDir = directions.SOUTH;
                 break;
             case directions.WEST:
+                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 90);
                 myDir = directions.NORTH;
                 break;
         }
+        pUpdateGraphicalDirections();
     }
     public void turnAround(){
         switch (myDir){
             case directions.NORTH:
+                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 0);
                 myDir = directions.SOUTH;
                 break;
             case directions.SOUTH:
+                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 180);
                 myDir = directions.NORTH;
                 break;
             case directions.EAST:
+                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), -90);
                 myDir = directions.WEST;
                 break;
             case directions.WEST:
+                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 90);
                 myDir = directions.EAST;
                 break;
         }
+        pUpdateGraphicalDirections();
     }
 
     public void moveForward(int steps){
@@ -331,8 +396,8 @@ public class Player implements iPlayer{
                 break;
             case directions.EAST:
                 if(checkOnBoardX()) {
-                    this.xBoardCoords += steps;
-                    this.xGraphicalCoords += graphicalSteps;
+                    this.xBoardCoords -= steps;
+                    this.xGraphicalCoords -= graphicalSteps;
                 }
                 else{
                     System.out.println("Error off board");
@@ -349,8 +414,8 @@ public class Player implements iPlayer{
                 break;
             case directions.WEST:
                 if(checkOnBoardX()) {
-                    this.xBoardCoords -= steps;
-                    this.xGraphicalCoords -= graphicalSteps;
+                    this.xBoardCoords += steps;
+                    this.xGraphicalCoords += graphicalSteps;
                 }
                 else{
                     System.out.println("Error off board");
@@ -370,13 +435,13 @@ public class Player implements iPlayer{
                 xySteps[1] = this.yBoardCoords + steps;
                 break;
             case EAST:
-                xySteps[0] = this.xBoardCoords + steps;
+                xySteps[0] = this.xBoardCoords - steps;
                 break;
             case SOUTH:
-                xySteps[1] = this.yBoardCoords- steps;
+                xySteps[1] = this.yBoardCoords - steps;
                 break;
             case WEST:
-                xySteps[0] = this.xBoardCoords - steps;
+                xySteps[0] = this.xBoardCoords + steps;
                 break;
             default:
                 System.out.println("Error in movement");
@@ -400,104 +465,119 @@ public class Player implements iPlayer{
             return true;
         }
     }
-    public int[] attack(Player player, Weapon weapon){
-        int[] fire_solution = new int[3];
-        fire_solution[0] = player.incrementForward(1)[0];//increments x N steps
-        fire_solution[1] = player.incrementForward(1)[1];//increments y N steps
-        switch (player.rollD20(player, weapon.scalerIndex)){
-            case 0:
-                System.out.println("Critical miss!");
-                fire_solution[2] = -1;
-                break;
-            case 1:
-                fire_solution[2] = 0;
-                break;
-            case 2:
-                fire_solution[2] = Math.round(weapon.damage * ((float)(player.getStatIndex(8) - 7) / 4)) ;
-                break;
-            case 3:
-                fire_solution[2] = Math.round(weapon.damage * ((float)(player.getStatIndex(8) - 7) / 3)) ;
-                break;
-            case 4:
-                fire_solution[2] = Math.round(weapon.damage * ((float)(player.getStatIndex(8) - 7) / 2)) ;
-                break;
-            case 5:
-                fire_solution[2] = Math.round(weapon.damage * ((float)(player.getStatIndex(8) - 7))) ;
-                break;
-            case 6:
-                fire_solution[2] = weapon.damage + ((player.getStatIndex(weapon.scalerIndex) - 7) / 4);
-                break;
-            case 7:
-                fire_solution[2] = weapon.damage + ((player.getStatIndex(weapon.scalerIndex) - 7) / 3);
-                break;
-            case 8:
-                fire_solution[2] = weapon.damage + ((player.getStatIndex(weapon.scalerIndex) - 7) / 2);
-                break;
-            case 9:
-                fire_solution[2] = weapon.damage + player.getStatIndex(weapon.scalerIndex) - 7;
-                break;
-            case 10:
-                fire_solution[2] = weapon.damage + player.getStatIndex(weapon.scalerIndex) - 7;
-                break;
-            case 11:
-                fire_solution[2] = weapon.damage + player.getStatIndex(weapon.scalerIndex) - 7;
-                break;
-            case 12:
-                fire_solution[2] = weapon.damage + player.getStatIndex(weapon.scalerIndex) - 7;
-                break;
-            case 13:
-                fire_solution[2] = weapon.damage + 1 + player.getStatIndex(weapon.scalerIndex) - 7;
-                break;
-            case 14:
-                fire_solution[2] = weapon.damage + 1 + player.getStatIndex(weapon.scalerIndex) - 7;
-                break;
-            case 15:
-                fire_solution[2] = (weapon.damage + player.getStatIndex(weapon.scalerIndex) - 7) * (1 + player.getStatIndex(8) - 7);
-                if(fire_solution[2] <= 0){
-                    fire_solution[2] = 1;
-                }
-                break;
-            case 16:
-                fire_solution[2] = (weapon.damage + player.getStatIndex(weapon.scalerIndex) - 7) * (2 + player.getStatIndex(8) - 7);
-                if(fire_solution[2] <= 1){
-                    fire_solution[2] = 2;
-                }
-                break;
-            case 17:
-                fire_solution[2] = (weapon.damage + player.getStatIndex(weapon.scalerIndex) - 7) * (3 + player.getStatIndex(8) - 7);
-                if(fire_solution[2] <= 2){
-                    fire_solution[2] = 3;
-                }
-                break;
-            case 18:
-                fire_solution[2] = (weapon.damage + player.getStatIndex(weapon.scalerIndex) - 7) * (4 + player.getStatIndex(8) - 7);
-                if(fire_solution[2] <= 3){
-                    fire_solution[2] = 4;
-                }
-                break;
-            case 19:
-                fire_solution[2] = (weapon.damage + player.getStatIndex(weapon.scalerIndex) - 7) * (4 + player.getStatIndex(8) - 7) + 1;
-                if(fire_solution[2] <= 4){
-                    fire_solution[2] = 5;
-                }
-                break;
-            case 20:
-                fire_solution[2] = (weapon.damage + player.getStatIndex(weapon.scalerIndex) - 7) * (5 + player.getStatIndex(8) - 7) + 2;
-                if(fire_solution[2] <= 5){
-                    fire_solution[2] = 6;
-                }
-                System.out.println("Critical hit!");
-                break;
-        }
 
-        return fire_solution;
+    public void dealDamage(int damageDealt, Player damagedPlayer){
+        damagedPlayer.hp -= damageDealt;
+        System.out.println(damagedPlayer.name + ": " + damagedPlayer.hp + "hp");
+        checkAlive();
+    }
+
+    public int[] attack(Player playerAttacked, Weapon weapon){
+        System.out.println("Attack Attempt: ");
+        if(this.incrementForward(1)[0] == playerAttacked.getxBoardCoords() && this.incrementForward(1)[1] == playerAttacked.getyBoardCoords()) {
+            int[] fire_solution = new int[3];
+            fire_solution[0] = playerAttacked.incrementForward(1)[0];//increments x N steps
+            fire_solution[1] = playerAttacked.incrementForward(1)[1];//increments y N steps
+            switch (playerAttacked.rollD20(playerAttacked, weapon.scalarIndex)) {
+                case 1:
+                    System.out.println("Critical miss!");
+                    this.dealDamage(1, this);
+                    fire_solution[2] = 0;
+                    break;
+                case 2:
+                    fire_solution[2] = 0;
+                    break;
+                case 3:
+                    fire_solution[2] = Math.round(weapon.damage * ((float) (playerAttacked.getStatIndex(8) - 7) / 4));
+                    break;
+                case 4:
+                    fire_solution[2] = Math.round(weapon.damage * ((float) (playerAttacked.getStatIndex(8) - 7) / 3));
+                    break;
+                case 5:
+                    fire_solution[2] = Math.round(weapon.damage * ((float) (playerAttacked.getStatIndex(8) - 7) / 2));
+                    break;
+                case 6:
+                    fire_solution[2] = Math.round(weapon.damage * ((float) (playerAttacked.getStatIndex(8) - 7)));
+                    break;
+                case 7:
+                    fire_solution[2] = weapon.damage + ((playerAttacked.getStatIndex(weapon.scalarIndex) - 7) / 4);
+                    break;
+                case 8:
+                    fire_solution[2] = weapon.damage + ((playerAttacked.getStatIndex(weapon.scalarIndex) - 7) / 3);
+                    break;
+                case 9:
+                    fire_solution[2] = weapon.damage + ((playerAttacked.getStatIndex(weapon.scalarIndex) - 7) / 2);
+                    break;
+                case 10:
+                    fire_solution[2] = weapon.damage + playerAttacked.getStatIndex(weapon.scalarIndex) - 7;
+                    break;
+                case 11:
+                    fire_solution[2] = weapon.damage + playerAttacked.getStatIndex(weapon.scalarIndex) - 7;
+                    break;
+                case 12:
+                    fire_solution[2] = weapon.damage + playerAttacked.getStatIndex(weapon.scalarIndex) - 7;
+                    break;
+                case 13:
+                    fire_solution[2] = weapon.damage + playerAttacked.getStatIndex(weapon.scalarIndex) - 7;
+                    break;
+                case 14:
+                    fire_solution[2] = weapon.damage + 1 + playerAttacked.getStatIndex(weapon.scalarIndex) - 7;
+                    break;
+                case 15:
+                    fire_solution[2] = weapon.damage + 1 + playerAttacked.getStatIndex(weapon.scalarIndex) - 7;
+                    break;
+                case 16:
+                    fire_solution[2] = (weapon.damage + playerAttacked.getStatIndex(weapon.scalarIndex) - 7) * (1 + playerAttacked.getStatIndex(8) - 7);
+                    if (fire_solution[2] <= 0) {
+                        fire_solution[2] = 1;
+                    }
+                    break;
+                case 17:
+                    fire_solution[2] = (weapon.damage + playerAttacked.getStatIndex(weapon.scalarIndex) - 7) * (2 + playerAttacked.getStatIndex(8) - 7);
+                    if (fire_solution[2] <= 1) {
+                        fire_solution[2] = 2;
+                    }
+                    break;
+                case 18:
+                    fire_solution[2] = (weapon.damage + playerAttacked.getStatIndex(weapon.scalarIndex) - 7) * (3 + playerAttacked.getStatIndex(8) - 7);
+                    if (fire_solution[2] <= 2) {
+                        fire_solution[2] = 3;
+                    }
+                    break;
+                case 19:
+                    fire_solution[2] = (weapon.damage + playerAttacked.getStatIndex(weapon.scalarIndex) - 7) * (4 + playerAttacked.getStatIndex(8) - 7);
+                    if (fire_solution[2] <= 3) {
+                        fire_solution[2] = 4;
+                    }
+                    break;
+                case 20:
+                    fire_solution[2] = (weapon.damage + playerAttacked.getStatIndex(weapon.scalarIndex) - 7) * (4 + playerAttacked.getStatIndex(8) - 7) + 1;
+                    if (fire_solution[2] <= 4) {
+                        fire_solution[2] = 5;
+                    }
+                    System.out.println("Critical hit!");
+                    break;
+                case 21:
+                    fire_solution[2] = (weapon.damage + playerAttacked.getStatIndex(weapon.scalarIndex) - 7) * (5 + playerAttacked.getStatIndex(8) - 7) + 2;
+                    if (fire_solution[2] <= 5) {
+                        fire_solution[2] = 6;
+                    }
+                    System.out.println("Over 20 roll!");
+                    break;
+            }
+            System.out.println("Damage dealt: " + fire_solution[2]);
+            this.dealDamage(fire_solution[2], playerAttacked);
+            return fire_solution;
+        }
+        else{
+            System.out.println("No playerAttacked at position to attack");
+            return null;
+        }
     }
     public int rollD20(Player player, int scalerStatIndex){
         //press enter
-        return new Random().nextInt(0,20) + player.getStatIndex(scalerStatIndex) - 7;
+        return new Random().nextInt(1,20) + player.getStatIndex(scalerStatIndex) - 7;
     }
-
-
     public int getDiameter(){
         return this.diameter;
     }
@@ -526,25 +606,7 @@ public class Player implements iPlayer{
         this.moveForward(1);
     }
 
-    public BufferedImage setDirection(Player player, int direction){
-        switch (direction){
-            case 1:
-                break;
-            case 2:
-                bufferedImage = rotateImageByDegrees(bufferedImage,90);
-                break;
-            case 3:
-                bufferedImage = rotateImageByDegrees(bufferedImage,180);
-                break;
-            case 4:
-                bufferedImage = rotateImageByDegrees(bufferedImage,270);
-                break;
-            default:
-                System.out.println("Error in set render direction");
-                break;
-        }
-        return bufferedImage;
-    }
+    //not my code
     public static BufferedImage rotateImageByDegrees(BufferedImage img, double angle) {
         double rads = Math.toRadians(angle);
         double sin = Math.abs(Math.sin(rads)), cos = Math.abs(Math.cos(rads));
@@ -568,6 +630,8 @@ public class Player implements iPlayer{
 
         return rotated;
     }
+
+
 
 
 }

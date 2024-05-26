@@ -67,6 +67,16 @@ public class EntityControlManager implements iEntityControlManager {
       return new_player;
    }
 
+   public void pAddNewToEnd(Player newPlayer){
+      if (this.pHead == null) {
+         this.pHead = newPlayer;
+      } else {
+         this.pTraverseForward(this.pSize).next = newPlayer;
+         newPlayer.prev = this.pTraverseForward(this.pSize - 1);
+      }
+      this.pSize++;
+   }
+
    public void iInsert() {
       this.worldInventory[iSize] = new Item();
       this.iSize++;
@@ -105,15 +115,22 @@ public class EntityControlManager implements iEntityControlManager {
    }
 
    public void pDelete(int index) {
-      pTraverseForward(index).prev.next = pTraverseForward(index).next;
-      pTraverseForward(index).next = null;
-      pTraverseForward(index).prev = null;
-      pTraverseForward(index).stats = null;
-      pTraverseForward(index).inventory = null;
-      pTraverseForward(index).hp = 0;
-      pTraverseForward(index).data = 0;
-      pTraverseForward(index).mp = 0;
-      pSize--;
+      if(pTraverseForward(index) != pHead && pSize > 2) {
+         pTraverseForward(index).prev.next = pTraverseForward(index).next;
+         pTraverseForward(index).next.prev = pTraverseForward(index).prev;
+         pTraverseForward(index).setNull();
+         pSize--;
+      }
+      else if(pSize > 1 && pTraverseForward(index) == pHead){
+         pHead.next.prev = null;
+         pHead.setNull();
+         pHead = null;
+         pSize --;
+      }
+      else{
+         pHead.next.setNull();
+         pHead.next = null;
+      }
    }
 
    //changes stats[statIndex] at index by statChange amount
@@ -149,19 +166,13 @@ public class EntityControlManager implements iEntityControlManager {
          pHead.next.prev = p;
       }
    }
-   public void pPushNew(Player p){
-      Player temp;
-      temp = pHead;
-      pHead = p;
-      pHead.next = temp;
-      pUpdate();
-   }
-
-   public void pSwap(int player1Index, int player2Index) {
+   public void pPushNew(Player pPushedPlayerNew){
+      this.pAddNewToEnd(pPushedPlayerNew);
+      this.pPushExisting(pPushedPlayerNew);
    }
 
    //pHead.stats[x] > pHead.next.stats[x] (insertion sort)
-   public void sortByHighestStatX(int x) {
+   public void pSortByHighestStatX(int x) {
       if (this.pHead == null) {
          System.out.println("world " + this.head.data + "has no players");
       } else {
@@ -235,10 +246,10 @@ public class EntityControlManager implements iEntityControlManager {
       }
    }
 
-   public boolean containsPlayerAtPos(int x, int y) {
+   public boolean pContainsPlayerAtPos(int xBoardCoords, int yBoardCoords) {
       boolean playerPresent = false;
       for (int i = 0; i < this.pSize; i++) {
-         if (pTraverseForward(i).getxGraphicalCoords() == x && this.pTraverseForward(i).getyGraphicalCoords() == y) {
+         if (pTraverseForward(i).incrementForward(1)[0] == xBoardCoords && this.pTraverseForward(i).incrementForward(1)[1] == yBoardCoords) {
             playerPresent = true;
             break;
          }
