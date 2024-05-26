@@ -16,7 +16,8 @@ public class Player implements iPlayer{
     String name;
     private enum role{
         GOBLIN,
-        KNIGHT
+        KNIGHT,
+        GIANT
     };
 
     role pRole;

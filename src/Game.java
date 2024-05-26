@@ -26,7 +26,7 @@ public class Game extends JPanel {
     private int turnCounter = 0;
     Scene currentScene;
     Player player1 = new Knight();
-    Player player2 = new Goblin();
+    Player player2 = new Giant();
     ButtonOneListener buttonOneListener = new ButtonOneListener();
     ButtonTwoListener buttonTwoListener = new ButtonTwoListener();
     ButtonThreeListener buttonThreeListener = new ButtonThreeListener();
@@ -193,11 +193,11 @@ public class Game extends JPanel {
                     button4.setText("Turn Around");
                     button5.setText("Attack");
                     gameGraphics.nextFrame();
-                    System.out.println(player2.getMyDir());
-                    System.out.println(player2.getxGraphicalCoords());
-                    System.out.println(player2.getyGraphicalCoords());
-                    System.out.println(player2.getxBoardCoords());
-                    System.out.println(player2.getyBoardCoords());
+                    System.out.println("Direction: " + player2.getMyDir());
+                    System.out.println("Graph Coords x: " + player2.getxGraphicalCoords());
+                    System.out.println("Graph Coords y: " + player2.getyGraphicalCoords());
+                    System.out.println("Board Coords x: " + player2.getxBoardCoords());
+                    System.out.println("Board Coords y: " + player2.getyBoardCoords());
                     takeTurn();
                     input = 0;
                     break;
