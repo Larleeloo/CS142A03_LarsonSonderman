@@ -26,7 +26,7 @@ public class Game extends JPanel {
     private int turnCounter = 0;
     Scene currentScene;
     Player player1 = new Knight();
-    Player player2 = new Giant();
+    Giant player2 = new Giant();
     ButtonOneListener buttonOneListener = new ButtonOneListener();
     ButtonTwoListener buttonTwoListener = new ButtonTwoListener();
     ButtonThreeListener buttonThreeListener = new ButtonThreeListener();
@@ -178,11 +178,11 @@ public class Game extends JPanel {
                     button4.setText("Turn Around");
                     button5.setText("Attack");
                     gameGraphics.nextFrame();
-                    System.out.println(player1.getMyDir());
-                    System.out.println(player1.getxGraphicalCoords());
-                    System.out.println(player1.getyGraphicalCoords());
-                    System.out.println(player1.getxBoardCoords());
-                    System.out.println(player1.getyBoardCoords());
+                    System.out.println("P1 Direction: " + player1.getMyDir());
+                    System.out.println("P1 Graph Coords x: " + player1.getxGraphicalCoords());
+                    System.out.println("P1 Graph Coords y: " + player1.getyGraphicalCoords());
+                    System.out.println("P1 Board Coords x: " + player1.getxBoardCoords());
+                    System.out.println("P1 Board Coords y: " + player1.getyBoardCoords());
                     takeTurn();
                     input = 0;
                     break;
@@ -193,11 +193,15 @@ public class Game extends JPanel {
                     button4.setText("Turn Around");
                     button5.setText("Attack");
                     gameGraphics.nextFrame();
-                    System.out.println("Direction: " + player2.getMyDir());
-                    System.out.println("Graph Coords x: " + player2.getxGraphicalCoords());
-                    System.out.println("Graph Coords y: " + player2.getyGraphicalCoords());
-                    System.out.println("Board Coords x: " + player2.getxBoardCoords());
-                    System.out.println("Board Coords y: " + player2.getyBoardCoords());
+                    System.out.println("P2 Direction: " + player2.getMyDir());
+                    //System.out.println("P2 Graph Coords x: " + player2.getxGraphicalCoords());
+                    //System.out.println("P2 Graph Coords y: " + player2.getyGraphicalCoords());
+                    //System.out.println("P2 Board Coords x: " + player2.getxBoardCoords());
+                    //System.out.println("P2 Board Coords y: " + player2.getyBoardCoords());
+                    System.out.println("Giant increment forward: x1: " + player2.incrementForwardGiant(1)[0]
+                            + " y1: " + player2.incrementForwardGiant(1)[1]
+                            + " x2: " + player2.incrementForwardGiant(1)[2]
+                            + " y2: " + player2.incrementForwardGiant(1)[3]);
                     takeTurn();
                     input = 0;
                     break;

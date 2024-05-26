@@ -35,7 +35,7 @@ public class Player implements iPlayer{
     int yGraphicalCoords;
     int xBoardCoords;
     int yBoardCoords;
-    private enum directions{
+    public enum directions{
         NORTH,
         SOUTH,
         EAST,
@@ -445,7 +445,7 @@ public class Player implements iPlayer{
                 xySteps[0] = this.xBoardCoords + steps;
                 break;
             default:
-                System.out.println("Error in movement");
+                System.out.println("Error in incrementing steps");
                 break;
         }
         return xySteps;
@@ -568,6 +568,111 @@ public class Player implements iPlayer{
             }
             System.out.println("Damage dealt: " + fire_solution[2]);
             this.dealDamage(fire_solution[2], playerAttacked);
+            return fire_solution;
+        }
+        else{
+            System.out.println("No playerAttacked at position to attack");
+            return null;
+        }
+    }
+    public int[] attack(Giant giantAttacked, Weapon weapon){
+        System.out.println("Giant Attack Attempt: ");
+        if((this.incrementForward(1)[0] == giantAttacked.translateToGenericBoardCoords()[0] && this.incrementForward(1)[1] == giantAttacked.translateToGenericBoardCoords()[1]) //x1y1
+                ||((this.incrementForward(1)[0] == giantAttacked.translateToGenericBoardCoords()[0]) && (this.incrementForward(1)[1] == giantAttacked.translateToGenericBoardCoords()[3])) //x1y2
+                ||((this.incrementForward(1)[0] == giantAttacked.translateToGenericBoardCoords()[2]) && (this.incrementForward(1)[1] == giantAttacked.translateToGenericBoardCoords()[1])) //x2y1
+                ||((this.incrementForward(1)[0] == giantAttacked.translateToGenericBoardCoords()[2]) && (this.incrementForward(1)[1] == giantAttacked.translateToGenericBoardCoords()[3]))) {//x2y2
+            int[] fire_solution = new int[3];
+            fire_solution[0] = giantAttacked.incrementForward(1)[0];//increments x N steps
+            fire_solution[1] = giantAttacked.incrementForward(1)[1];//increments y N steps
+            switch (giantAttacked.rollD20(giantAttacked, weapon.scalarIndex)) {
+                case 1:
+                    System.out.println("Critical miss!");
+                    this.dealDamage(1, this);
+                    fire_solution[2] = 0;
+                    break;
+                case 2:
+                    fire_solution[2] = 0;
+                    break;
+                case 3:
+                    fire_solution[2] = Math.round(weapon.damage * ((float) (giantAttacked.getStatIndex(8) - 7) / 4));
+                    break;
+                case 4:
+                    fire_solution[2] = Math.round(weapon.damage * ((float) (giantAttacked.getStatIndex(8) - 7) / 3));
+                    break;
+                case 5:
+                    fire_solution[2] = Math.round(weapon.damage * ((float) (giantAttacked.getStatIndex(8) - 7) / 2));
+                    break;
+                case 6:
+                    fire_solution[2] = Math.round(weapon.damage * ((float) (giantAttacked.getStatIndex(8) - 7)));
+                    break;
+                case 7:
+                    fire_solution[2] = weapon.damage + ((giantAttacked.getStatIndex(weapon.scalarIndex) - 7) / 4);
+                    break;
+                case 8:
+                    fire_solution[2] = weapon.damage + ((giantAttacked.getStatIndex(weapon.scalarIndex) - 7) / 3);
+                    break;
+                case 9:
+                    fire_solution[2] = weapon.damage + ((giantAttacked.getStatIndex(weapon.scalarIndex) - 7) / 2);
+                    break;
+                case 10:
+                    fire_solution[2] = weapon.damage + giantAttacked.getStatIndex(weapon.scalarIndex) - 7;
+                    break;
+                case 11:
+                    fire_solution[2] = weapon.damage + giantAttacked.getStatIndex(weapon.scalarIndex) - 7;
+                    break;
+                case 12:
+                    fire_solution[2] = weapon.damage + giantAttacked.getStatIndex(weapon.scalarIndex) - 7;
+                    break;
+                case 13:
+                    fire_solution[2] = weapon.damage + giantAttacked.getStatIndex(weapon.scalarIndex) - 7;
+                    break;
+                case 14:
+                    fire_solution[2] = weapon.damage + 1 + giantAttacked.getStatIndex(weapon.scalarIndex) - 7;
+                    break;
+                case 15:
+                    fire_solution[2] = weapon.damage + 1 + giantAttacked.getStatIndex(weapon.scalarIndex) - 7;
+                    break;
+                case 16:
+                    fire_solution[2] = (weapon.damage + giantAttacked.getStatIndex(weapon.scalarIndex) - 7) * (1 + giantAttacked.getStatIndex(8) - 7);
+                    if (fire_solution[2] <= 0) {
+                        fire_solution[2] = 1;
+                    }
+                    break;
+                case 17:
+                    fire_solution[2] = (weapon.damage + giantAttacked.getStatIndex(weapon.scalarIndex) - 7) * (2 + giantAttacked.getStatIndex(8) - 7);
+                    if (fire_solution[2] <= 1) {
+                        fire_solution[2] = 2;
+                    }
+                    break;
+                case 18:
+                    fire_solution[2] = (weapon.damage + giantAttacked.getStatIndex(weapon.scalarIndex) - 7) * (3 + giantAttacked.getStatIndex(8) - 7);
+                    if (fire_solution[2] <= 2) {
+                        fire_solution[2] = 3;
+                    }
+                    break;
+                case 19:
+                    fire_solution[2] = (weapon.damage + giantAttacked.getStatIndex(weapon.scalarIndex) - 7) * (4 + giantAttacked.getStatIndex(8) - 7);
+                    if (fire_solution[2] <= 3) {
+                        fire_solution[2] = 4;
+                    }
+                    break;
+                case 20:
+                    fire_solution[2] = (weapon.damage + giantAttacked.getStatIndex(weapon.scalarIndex) - 7) * (4 + giantAttacked.getStatIndex(8) - 7) + 1;
+                    if (fire_solution[2] <= 4) {
+                        fire_solution[2] = 5;
+                    }
+                    System.out.println("Critical hit!");
+                    break;
+                case 21:
+                    fire_solution[2] = (weapon.damage + giantAttacked.getStatIndex(weapon.scalarIndex) - 7) * (5 + giantAttacked.getStatIndex(8) - 7) + 2;
+                    if (fire_solution[2] <= 5) {
+                        fire_solution[2] = 6;
+                    }
+                    System.out.println("Over 20 roll!");
+                    break;
+            }
+            System.out.println("Damage dealt: " + fire_solution[2]);
+            this.dealDamage(fire_solution[2], giantAttacked);
             return fire_solution;
         }
         else{
