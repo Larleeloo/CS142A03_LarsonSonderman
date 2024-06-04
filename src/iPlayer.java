@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 public interface iPlayer {
     String name = "NONE";
     int data = 0;
@@ -39,7 +41,7 @@ public interface iPlayer {
     public void turnLeft();
     public void turnRight();
     public void turnAround();
-    public void moveForward(int steps);
+    public void moveForward(int steps, Player[] players) throws IOException;
     public boolean checkOnBoardX();
     public boolean checkOnBoardY();
     public int[] attack(Player playerAttacked, Weapon weapon);

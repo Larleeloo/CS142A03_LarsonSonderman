@@ -73,6 +73,7 @@ public class Player implements iPlayer{
         yBoardCoords = 0;
         xGraphicalCoords = (72 * xBoardCoords) + 12;
         yGraphicalCoords = (72 * yBoardCoords) + 12;
+        diameter = 1;
 
         myDir = directions.NORTH;
 
@@ -178,7 +179,6 @@ public class Player implements iPlayer{
         yBoardCoords = 0;
         xGraphicalCoords = 0;
         yGraphicalCoords = 0;
-
     }
     public void setName(String name){
         this.name = name;
@@ -247,6 +247,8 @@ public class Player implements iPlayer{
                 return role.KNIGHT;
             case 1:
                 return role.GOBLIN;
+            case 2:
+                return role.GIANT;
             default:
                 System.out.println("Error default role assigned");
                 return role.KNIGHT;
@@ -259,6 +261,8 @@ public class Player implements iPlayer{
                 return 0;
             case role.GOBLIN:
                 return 1;
+            case role.GIANT:
+                return 2;
             default:
                 return 0;
         }
@@ -383,48 +387,83 @@ public class Player implements iPlayer{
         pUpdateGraphicalDirections();
     }
 
-    public void moveForward(int steps){
+    public boolean checkForwardBounds(Player[] players) {
+        boolean blocked = false;
+        for (Player player : players) {
+            if (player != this) {
+                blocked = checkForwardBounds(player);
+                if (blocked) {
+                    System.out.println(player.name + " is in the way");
+                    break;
+                }
+            }
+        }
+        return blocked;
+    }
+
+    public boolean checkForwardBounds(Player player) {
+        boolean blocked = false;
+        Rectangle forwardBounds = this.getForwardBounds();
+        Rectangle playerBounds = player.getBounds();
+        blocked = forwardBounds.intersects(playerBounds);
+        return blocked;
+    }
+
+    public Rectangle getForwardBounds() {
+        int[] xySteps = incrementForward(1);
+        return new Rectangle(xySteps[0], xySteps[1], this.getDiameter(), this.getDiameter());
+    }
+
+    public Rectangle getBounds(){
+        return new Rectangle(this.getxBoardCoords(), this.getyBoardCoords(), this.getDiameter(), this.getDiameter());
+    }
+
+    public boolean checkCollision(Player p1, Player p2){
+        return p1.getForwardBounds().intersects(p2.getBounds());
+    }
+    public void moveForward(int steps, Player[] players) throws IOException {
         int graphicalSteps = steps * 72;
-        switch (myDir){
-            case directions.NORTH:
-                if(checkOnBoardY()) {
-                    this.yBoardCoords += steps;
-                    this.yGraphicalCoords += graphicalSteps;
-                }
-                else{
-                    System.out.println("Error off board");
-                }
-                break;
-            case directions.EAST:
-                if(checkOnBoardX()) {
-                    this.xBoardCoords -= steps;
-                    this.xGraphicalCoords -= graphicalSteps;
-                }
-                else{
-                    System.out.println("Error off board");
-                }
-                break;
-            case directions.SOUTH:
-                if(checkOnBoardY()) {
-                    this.yBoardCoords -= steps;
-                    this.yGraphicalCoords -= graphicalSteps;
-                }
-                else{
-                    System.out.println("Error off board");
-                }
-                break;
-            case directions.WEST:
-                if(checkOnBoardX()) {
-                    this.xBoardCoords += steps;
-                    this.xGraphicalCoords += graphicalSteps;
-                }
-                else{
-                    System.out.println("Error off board");
-                }
-                break;
-            default:
-                System.out.println("Error in movement");
-                break;
+        if(!checkForwardBounds(players)) {
+            switch (myDir) {
+                case directions.NORTH:
+                    if (checkOnBoardY()) {
+                        this.yBoardCoords += steps;
+                        this.yGraphicalCoords += graphicalSteps;
+                    } else {
+                        System.out.println("Error off board");
+                    }
+                    break;
+                case directions.EAST:
+                    if (checkOnBoardX()) {
+                        this.xBoardCoords -= steps;
+                        this.xGraphicalCoords -= graphicalSteps;
+                    } else {
+                        System.out.println("Error off board");
+                    }
+                    break;
+                case directions.SOUTH:
+                    if (checkOnBoardY()) {
+                        this.yBoardCoords -= steps;
+                        this.yGraphicalCoords -= graphicalSteps;
+                    } else {
+                        System.out.println("Error off board");
+                    }
+                    break;
+                case directions.WEST:
+                    if (checkOnBoardX()) {
+                        this.xBoardCoords += steps;
+                        this.xGraphicalCoords += graphicalSteps;
+                    } else {
+                        System.out.println("Error off board");
+                    }
+                    break;
+                default:
+                    System.out.println("Error in movement");
+                    break;
+            }
+        }
+        else{
+            System.out.println("Path Blocked");
         }
     }
     public int[] incrementForward(int steps){
@@ -576,7 +615,7 @@ public class Player implements iPlayer{
         }
     }
     public int[] attack(Giant giantAttacked, Weapon weapon){
-        System.out.println("Giant Attack Attempt: ");
+        System.out.println("Attack on Giant Attempt: ");
         if((this.incrementForward(1)[0] == giantAttacked.translateToGenericBoardCoords()[0] && this.incrementForward(1)[1] == giantAttacked.translateToGenericBoardCoords()[1]) //x1y1
                 ||((this.incrementForward(1)[0] == giantAttacked.translateToGenericBoardCoords()[0]) && (this.incrementForward(1)[1] == giantAttacked.translateToGenericBoardCoords()[3])) //x1y2
                 ||((this.incrementForward(1)[0] == giantAttacked.translateToGenericBoardCoords()[2]) && (this.incrementForward(1)[1] == giantAttacked.translateToGenericBoardCoords()[1])) //x2y1
@@ -680,9 +719,9 @@ public class Player implements iPlayer{
             return null;
         }
     }
-    public int rollD20(Player player, int scalerStatIndex){
+    public int rollD20(Player player, int scalarStatIndex){
         //press enter
-        return new Random().nextInt(1,20) + player.getStatIndex(scalerStatIndex) - 7;
+        return new Random().nextInt(1,20) + player.getStatIndex(scalarStatIndex) - 7;
     }
     public int getDiameter(){
         return this.diameter;
@@ -707,9 +746,6 @@ public class Player implements iPlayer{
     }
     public void setBufferedImage(BufferedImage bufferedImage){
         this.bufferedImage = bufferedImage;
-    }
-    public void moveOne(){
-        this.moveForward(1);
     }
 
     //not my code

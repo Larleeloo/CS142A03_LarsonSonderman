@@ -1,8 +1,13 @@
 import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 public class Giant extends Player{
+
+    BufferedImage attackArea;
+    File giantAttackArea;
 
     private boolean attackDelay;
     public Giant() throws IOException {
@@ -11,12 +16,15 @@ public class Giant extends Player{
         this.setDiameter(2);
         File giantTexture1 = new File("Giant1.png");
         this.setBufferedImage(ImageIO.read(giantTexture1));
+        giantAttackArea = new File("Enemy_Attack_Area.png");
+        attackArea = ImageIO.read(giantAttackArea);
 
         this.xBoardCoords = 0;
         this.yBoardCoords = 0;
         this.xGraphicalCoords = 24 + (72 * xBoardCoords);
         this.yGraphicalCoords = 24 + (72 * yBoardCoords);
 
+        this.setRole(2);
         this.attackDelay = true;
         this.setDiameter(2);
     }
@@ -28,6 +36,14 @@ public class Giant extends Player{
         this.xBoardCoords = (xGraphicalCoords - 24) / 72;
         this.yBoardCoords = (yGraphicalCoords - 24) / 72;
     }
+    public BufferedImage getAttackArea(){
+        return this.attackArea;
+    }
+
+    public void setAttackArea(BufferedImage attackArea){
+        this.attackArea = attackArea;
+    }
+
     @Override
     public boolean checkOnBoardX(){
         if(this.incrementForward(1)[0] > 8 || this.incrementForward(1)[0] < 0){
@@ -54,8 +70,20 @@ public class Giant extends Player{
         giantArea[3] = this.yBoardCoords + 1;
         return giantArea;
     }
+    public Rectangle getForwardBounds2(){
+        return new Rectangle(this.incrementForward(1)[2], this.incrementForward(1)[3], this.getDiameter(), this.getDiameter());
+    }
+    public boolean checkCollision2(Player p1, Giant p2){
+        return p2.getForwardBounds2().intersects(p1.getBounds());
+    }
+    @Override
+    public void moveForward(int steps, Player[] players) throws IOException {
+        if(!checkForwardBounds(players)){
+            super.moveForward(1, players);
+        }
+    }
 
-    public int[] incrementForwardGiant(int steps){
+    public int[] incrementForwardModGiant(int steps){
         int[] xySteps = new int[4];
         xySteps[0] = this.getxBoardCoords();
         xySteps[1] = this.getyBoardCoords();
@@ -64,7 +92,7 @@ public class Giant extends Player{
         switch (myDir){
             case NORTH:
                 xySteps[0] = this.xBoardCoords;
-                xySteps[1] = this.yBoardCoords + 1 + steps;
+                xySteps[1] = this.yBoardCoords + steps + 1; //1 extra down (North)
                 xySteps[2] = this.xBoardCoords + 1;
                 xySteps[3] = xySteps[1];
                 break;
@@ -81,7 +109,46 @@ public class Giant extends Player{
                 xySteps[3] = xySteps[1];
                 break;
             case WEST:
-                xySteps[0] = this.xBoardCoords + steps + 1;
+                xySteps[0] = this.xBoardCoords + steps + 1; //1 extra to the right (North)
+                xySteps[1] = this.yBoardCoords;
+                xySteps[2] = xySteps[0];
+                xySteps[3] = this.yBoardCoords + 1;
+                break;
+            default:
+                System.out.println("Error in incrementing steps");
+                break;
+        }
+        return xySteps;
+    }
+
+    @Override
+    public int[] incrementForward(int steps){
+        int[] xySteps = new int[4];
+        xySteps[0] = this.getxBoardCoords();
+        xySteps[1] = this.getyBoardCoords();
+        xySteps[2] = this.getxBoardCoords();
+        xySteps[3] = this.getyBoardCoords();
+        switch (myDir){
+            case NORTH:
+                xySteps[0] = this.xBoardCoords;
+                xySteps[1] = this.yBoardCoords + steps;
+                xySteps[2] = this.xBoardCoords + 1;
+                xySteps[3] = xySteps[1];
+                break;
+            case EAST:
+                xySteps[0] = this.xBoardCoords - steps;
+                xySteps[1] = this.yBoardCoords;
+                xySteps[2] = xySteps[0];
+                xySteps[3] = this.yBoardCoords + 1;
+                break;
+            case SOUTH:
+                xySteps[0] = this.xBoardCoords;
+                xySteps[1] = this.yBoardCoords - steps;
+                xySteps[2] = this.xBoardCoords + 1;
+                xySteps[3] = xySteps[1];
+                break;
+            case WEST:
+                xySteps[0] = this.xBoardCoords + steps;
                 xySteps[1] = this.yBoardCoords;
                 xySteps[2] = xySteps[0];
                 xySteps[3] = this.yBoardCoords + 1;
@@ -96,8 +163,8 @@ public class Giant extends Player{
     @Override
     public int[] attack(Player playerAttacked, Weapon weapon){
         System.out.println("Attack Attempt: ");
-        if((this.incrementForwardGiant(1)[0] == playerAttacked.getxBoardCoords() && this.incrementForwardGiant(1)[1] == playerAttacked.getyBoardCoords())
-                || (this.incrementForwardGiant(1)[2] == playerAttacked.getxBoardCoords() && this.incrementForwardGiant(1)[3] == playerAttacked.getyBoardCoords())
+        if((this.incrementForwardModGiant(1)[0] == playerAttacked.getxBoardCoords() && this.incrementForwardModGiant(1)[1] == playerAttacked.getyBoardCoords())
+                || (this.incrementForwardModGiant(1)[2] == playerAttacked.getxBoardCoords() && this.incrementForwardModGiant(1)[3] == playerAttacked.getyBoardCoords())
                 && !this.attackDelay) {
             int[] fire_solution = new int[3];
             fire_solution[0] = playerAttacked.incrementForward(1)[0];//increments x N steps

@@ -13,6 +13,8 @@ public class GameGraphics extends JComponent {
     public void paintComponent(Graphics g){
         paintBackground(g, currentScene.background);
         if(currentScene.pHead != null && currentScene.pHead.next != null) {
+            paintKnightAttackArea(g, (Knight) currentScene.pHead);
+            paintGiantAttackArea(g, (Giant) currentScene.pHead.next);
             paintPlayer1(g, currentScene.pHead, currentScene.pHead.getxGraphicalCoords(), currentScene.pHead.getyGraphicalCoords());
             paintPlayer2(g, currentScene.pHead.next, currentScene.pHead.next.getxGraphicalCoords(), currentScene.pHead.next.getyGraphicalCoords());
         }
@@ -27,7 +29,13 @@ public class GameGraphics extends JComponent {
     public void paintPlayer2(Graphics g, Player player2, int xGraphicalCoords, int yGraphicalCoords){
         g.drawImage(player2.getBufferedImage(), xGraphicalCoords, yGraphicalCoords, null);
     }
-
+    public void paintKnightAttackArea(Graphics g, Knight player1){
+        g.drawImage(player1.getAttackArea(), player1.incrementForward(1)[0] * 72, player1.incrementForward(1)[1] * 72, null);
+    }
+    public void paintGiantAttackArea(Graphics g, Giant player2){
+        g.drawImage(player2.getAttackArea(), player2.incrementForwardModGiant(1)[0] * 72, player2.incrementForwardModGiant(1)[1] * 72, null);
+        g.drawImage(player2.getAttackArea(), player2.incrementForwardModGiant(1)[2] * 72, player2.incrementForwardModGiant(1)[3] * 72, null);
+    }
     public void paintBackground(Graphics g, RenderedBackground background){
         g.drawImage(background.getBufferedImage(), 0, 0, null);
     }

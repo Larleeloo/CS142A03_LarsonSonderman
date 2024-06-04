@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -27,6 +28,7 @@ public class Game extends JPanel {
     Scene currentScene;
     Player player1 = new Knight();
     Giant player2 = new Giant();
+    Player[] allPlayers = {player1, player2};
     ButtonOneListener buttonOneListener = new ButtonOneListener();
     ButtonTwoListener buttonTwoListener = new ButtonTwoListener();
     ButtonThreeListener buttonThreeListener = new ButtonThreeListener();
@@ -35,38 +37,47 @@ public class Game extends JPanel {
     GameStartListener gameStartListener = new GameStartListener();
     ActionEvent doAction = new ActionEvent(this, 1, "COMMAND1");
     public Game(int landArea) throws IOException {
-        //this.setLayout(null);
         currentScene = new Scene(10);
         currentScene.pPushNew(player2);
         currentScene.pPushNew(player1);
         player2.setRole(1);
         this.gameGraphics = new GameGraphics(currentScene);
         this.setPreferredSize(new Dimension(1920,1080));
-        gameGraphics.setPreferredSize(new Dimension(720,720));
+        this.setBounds(0,0,1920,1080);
+        this.setLayout(null);
+        gameGraphics.setBounds(0,0,720,720);
         this.add(gameGraphics);
         this.add(instructions);
+        instructions.setBounds(720,690,500,30);
         this.add(directions);
+        directions.setBounds(720,660,500,30);
         directions.setVisible(false);
         this.add(extraText);
+        extraText.setBounds(720,630,500,30);
         extraText.setVisible(false);
         this.add(button1);
+        button1.setBounds(720,720,100,30);
         button1.addActionListener(buttonOneListener);
         button1.setVisible(false);
         this.add(button2);
+        button2.setBounds(720,750,100,30);
         button2.addActionListener(buttonTwoListener);
         button2.setVisible(false);
         this.add(button3);
         button3.addActionListener(buttonThreeListener);
+        button3.setBounds(720,780,100,30);
         button3.setVisible(false);
         this.add(button4);
+        button4.setBounds(720,810,100,30);
         button4.addActionListener(buttonFourListener);
         button4.setVisible(false);
         this.add(button5);
+        button5.setBounds(720,840,100,30);
         button5.addActionListener(buttonFiveListener);
         button5.setVisible(false);
         gameStartButton.addActionListener(gameStartListener);
         this.add(gameStartButton);
-        //gameStartButton.setBounds(910,490,100,100);
+        gameStartButton.setBounds(720,600,500,30);
     }
     public void endGame(){
         instructions.setText("Game Over!");
@@ -111,7 +122,7 @@ public class Game extends JPanel {
     }
     private Player initializeComputer(){
         instructions.setText("Who would you like to play against? This is your opponent... choose wisely");
-        player2.setRole(1);
+        player2.setRole(2);
         gameGraphics.nextFrame();
         gameState = 2;
         return player2;
@@ -132,7 +143,6 @@ public class Game extends JPanel {
         turnCounter++;
         gameGraphics.nextFrame();
     }
-
     class GameStartListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -178,11 +188,7 @@ public class Game extends JPanel {
                     button4.setText("Turn Around");
                     button5.setText("Attack");
                     gameGraphics.nextFrame();
-                    System.out.println("P1 Direction: " + player1.getMyDir());
-                    System.out.println("P1 Graph Coords x: " + player1.getxGraphicalCoords());
-                    System.out.println("P1 Graph Coords y: " + player1.getyGraphicalCoords());
-                    System.out.println("P1 Board Coords x: " + player1.getxBoardCoords());
-                    System.out.println("P1 Board Coords y: " + player1.getyBoardCoords());
+                    logPlayerPosition(player1);
                     takeTurn();
                     input = 0;
                     break;
@@ -193,15 +199,7 @@ public class Game extends JPanel {
                     button4.setText("Turn Around");
                     button5.setText("Attack");
                     gameGraphics.nextFrame();
-                    System.out.println("P2 Direction: " + player2.getMyDir());
-                    //System.out.println("P2 Graph Coords x: " + player2.getxGraphicalCoords());
-                    //System.out.println("P2 Graph Coords y: " + player2.getyGraphicalCoords());
-                    //System.out.println("P2 Board Coords x: " + player2.getxBoardCoords());
-                    //System.out.println("P2 Board Coords y: " + player2.getyBoardCoords());
-                    System.out.println("Giant increment forward: x1: " + player2.incrementForwardGiant(1)[0]
-                            + " y1: " + player2.incrementForwardGiant(1)[1]
-                            + " x2: " + player2.incrementForwardGiant(1)[2]
-                            + " y2: " + player2.incrementForwardGiant(1)[3]);
+                    logPlayerPosition(player2);
                     takeTurn();
                     input = 0;
                     break;
@@ -223,6 +221,14 @@ public class Game extends JPanel {
                     break;
             }
         }
+        private void logPlayerPosition(Player player) {
+            System.out.println("Player: " + player.getName());
+            System.out.println("Direction: " + player.getMyDir());
+            System.out.println("Graphical Coords x: " + player.getxGraphicalCoords());
+            System.out.println("Graphical Coords y: " + player.getyGraphicalCoords());
+            System.out.println("Board Coords x: " + player.getxBoardCoords());
+            System.out.println("Board Coords y: " + player.getyBoardCoords());
+        }
     }
 
 
@@ -240,7 +246,11 @@ public class Game extends JPanel {
                     gameStartListener.actionPerformed(doAction);
                     break;
                 case 3:
-                    player1.moveForward(1);
+                    try {
+                        player1.moveForward(1, allPlayers);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     gameState = 4;
                     instructions.setText(player2.getName() + "'s turn...");
                     directions.setText("Game State: " + gameState);
@@ -249,7 +259,11 @@ public class Game extends JPanel {
                     gameStartListener.actionPerformed(doAction);
                     break;
                 case 4:
-                    player2.moveForward(1);
+                    try {
+                        player2.moveForward(1, allPlayers);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     gameState = 3;
                     instructions.setText(player1.getName() + "'s turn...");
                     directions.setText("Game State: " + gameState);
