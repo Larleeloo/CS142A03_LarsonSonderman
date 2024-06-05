@@ -28,6 +28,7 @@ public class Player implements iPlayer{
     Item[] inventory = new Item[63];
     Weapon weapon;
     int hp;
+    int maxHP = 10;
     boolean alive;
     int mp;
     int[] stats = new int[10];
@@ -57,6 +58,7 @@ public class Player implements iPlayer{
         inventorySize = 10;
         inventory[0] = new Weapon(0, this, this.xBoardCoords, this.yBoardCoords, "Melee");
         hp = 10;
+        maxHP = 20;
         mp = 100;
         stats[0] = 7; //speed
         stats[1] = 7; //strength
@@ -147,6 +149,9 @@ public class Player implements iPlayer{
     public int getHP(){
         return this.hp;
     }
+    public int getMaxHP(){
+        return this.maxHP;
+    }
 
     public int getMP(){
         return this.mp;
@@ -216,6 +221,10 @@ public class Player implements iPlayer{
     public int setHP(int HPIn){
         this.hp = HPIn;
         return this.hp;
+    }
+
+    public void setMaxHP(int maxHP){
+        this.maxHP = maxHP;
     }
 
     public int setMP(int MPIn){

@@ -6,8 +6,8 @@ import java.io.IOException;
 // *1) universal hit boxes (for objects, players, etc)
 // *1a) figure out why giant isn't able to move the full length of the board
 // 1b) make a collision checker for all entities
-// 2) hp UI system, update on movement info, damage dealt, etc.
-// 3) define all coordinates on UI
+// *2) hp UI system, update on movement info, damage dealt, etc. attack delay on giant
+// *3) define all coordinates on UI
 // 4) 2 more classes
 // 5) class select screen
 // 6) auto robot turns and disable buttons

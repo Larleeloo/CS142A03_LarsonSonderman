@@ -1,5 +1,6 @@
 
 import javax.swing.*;
+import javax.swing.text.html.parser.Entity;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +10,7 @@ import java.util.Random;
 public class Game extends JPanel {
     int input = 0;
     int gameState = 0;
+    JLabel coordinates = new JLabel("Coordinates");
     JLabel instructions = new JLabel("");
     JLabel directions = new JLabel();
     JLabel extraText = new JLabel();
@@ -45,12 +47,14 @@ public class Game extends JPanel {
         this.setPreferredSize(new Dimension(1920,1080));
         this.setBounds(0,0,1920,1080);
         this.setLayout(null);
-        gameGraphics.setBounds(0,0,720,720);
+        gameGraphics.setBounds(0,0,720,1080);
         this.add(gameGraphics);
         this.add(instructions);
         instructions.setBounds(720,690,500,30);
         this.add(directions);
         directions.setBounds(720,660,500,30);
+        this.add(coordinates);
+        coordinates.setBounds(720,0,100,100);
         directions.setVisible(false);
         this.add(extraText);
         extraText.setBounds(720,630,500,30);
@@ -187,6 +191,7 @@ public class Game extends JPanel {
                     button3.setText("Turn Right");
                     button4.setText("Turn Around");
                     button5.setText("Attack");
+                    printAllEntityCoords(allPlayers);
                     gameGraphics.nextFrame();
                     logPlayerPosition(player1);
                     takeTurn();
@@ -198,6 +203,7 @@ public class Game extends JPanel {
                     button3.setText("Turn Right");
                     button4.setText("Turn Around");
                     button5.setText("Attack");
+                    printAllEntityCoords(allPlayers);
                     gameGraphics.nextFrame();
                     logPlayerPosition(player2);
                     takeTurn();
@@ -228,6 +234,16 @@ public class Game extends JPanel {
             System.out.println("Graphical Coords y: " + player.getyGraphicalCoords());
             System.out.println("Board Coords x: " + player.getxBoardCoords());
             System.out.println("Board Coords y: " + player.getyBoardCoords());
+        }
+
+        private void printAllEntityCoords(Player[] players){
+            String coords = new String("<html>");
+            for(int i = 0; i < players.length; i++){
+                coords += players[i].getName() + ": (" + (players[i].getxBoardCoords() + 1) + ",";
+                coords += (players[i].getyBoardCoords() + 1) + ")<br/>";
+            }
+            coords += "<html>";
+            coordinates.setText(coords);
         }
     }
 
