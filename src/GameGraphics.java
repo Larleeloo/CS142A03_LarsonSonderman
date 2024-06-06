@@ -25,8 +25,8 @@ public class GameGraphics extends JComponent {
             BufferedImage healthBarImage2 = healthBar2.getHealthBarImage();
             g.drawImage(healthBarImage1, 0, 900, null);
             g.drawImage(healthBarImage2, 0, 932, null);
-            paintKnightAttackArea(g, (Knight) currentScene.pHead);
-            paintGiantAttackArea(g, (Giant) currentScene.pHead.next);
+            paintHeroAttackArea(g, (Hero) currentScene.pHead);
+            paintEnemyAttackArea(g, (Goblin) currentScene.pHead.next);
             paintPlayer1(g, currentScene.pHead, currentScene.pHead.getxGraphicalCoords(), currentScene.pHead.getyGraphicalCoords());
             paintPlayer2(g, currentScene.pHead.next, currentScene.pHead.next.getxGraphicalCoords(), currentScene.pHead.next.getyGraphicalCoords());
         }
@@ -41,7 +41,10 @@ public class GameGraphics extends JComponent {
     public void paintPlayer2(Graphics g, Player player2, int xGraphicalCoords, int yGraphicalCoords){
         g.drawImage(player2.getBufferedImage(), xGraphicalCoords, yGraphicalCoords, null);
     }
-    public void paintKnightAttackArea(Graphics g, Knight player1){
+    public void paintHeroAttackArea(Graphics g, Hero player1){
+        g.drawImage(player1.getAttackArea(), player1.incrementForward(1)[0] * 72, player1.incrementForward(1)[1] * 72, null);
+    }
+    public void paintEnemyAttackArea(Graphics g, Goblin player1){
         g.drawImage(player1.getAttackArea(), player1.incrementForward(1)[0] * 72, player1.incrementForward(1)[1] * 72, null);
     }
     public void paintGiantAttackArea(Graphics g, Giant player2){

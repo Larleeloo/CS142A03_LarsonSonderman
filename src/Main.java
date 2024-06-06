@@ -11,6 +11,7 @@ import java.io.IOException;
 // 4) 2 more classes
 // 5) class select screen
 // 6) auto robot turns and disable buttons
+// 6a) Use WASD to move and Space to attack
 // 7) clean up encapsulation
 // 8) resizeable gameboard
 // 9) load multiple scenes and beyond

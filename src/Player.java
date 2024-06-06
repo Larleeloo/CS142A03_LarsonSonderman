@@ -8,10 +8,10 @@ import java.util.Random;
 
 public class Player implements iPlayer{
 
-    private int diameter;
-    private Color color;
-    private File file;
-    private BufferedImage bufferedImage;
+    int diameter;
+    Color color;
+    File file;
+    BufferedImage bufferedImage;
 
     String name;
     private enum role{
@@ -247,7 +247,8 @@ public class Player implements iPlayer{
     }
 
     public void setmyDir(int myDir){
-        this.myDir = directionTranslate(myDir);
+        directions newDirection = directionTranslate(myDir);
+        this.rotateImage(newDirection);
     }
 
     public role roleTranslate(int intRole){
@@ -315,28 +316,6 @@ public class Player implements iPlayer{
         return this.alive;
     }
 
-    public void turnLeft(){
-        switch (myDir){
-            case directions.NORTH:
-                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 0);
-                myDir = directions.WEST;//was north now west
-                break;
-            case directions.SOUTH:
-                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 180);
-                myDir = directions.EAST;//was east now north
-                break;
-            case directions.EAST:
-                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), -90);
-                myDir = directions.NORTH;//was south now east
-                break;
-            case directions.WEST:
-                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 90);
-                myDir = directions.SOUTH;//was west now south
-                break;
-        }
-        pUpdateGraphicalDirections();
-    }
-
     public void pUpdateGraphicalDirections(){
         switch (myDir){
             case directions.NORTH:
@@ -353,49 +332,62 @@ public class Player implements iPlayer{
                 break;
         }
     }
-    public void turnRight(){
-        switch (myDir){
+    public void turnLeft() {
+        directions newDir = directions.NORTH;
+        switch (myDir) {
             case directions.NORTH:
-                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 0);
-                myDir = directions.EAST;
+                newDir = directions.WEST;
                 break;
             case directions.SOUTH:
-                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 180);
-                myDir = directions.WEST;
+                newDir = directions.EAST;
                 break;
             case directions.EAST:
-                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), -90);
-                myDir = directions.SOUTH;
+                newDir = directions.NORTH;
                 break;
             case directions.WEST:
-                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 90);
-                myDir = directions.NORTH;
+                newDir = directions.SOUTH;
                 break;
         }
-        pUpdateGraphicalDirections();
-    }
-    public void turnAround(){
-        switch (myDir){
-            case directions.NORTH:
-                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 0);
-                myDir = directions.SOUTH;
-                break;
-            case directions.SOUTH:
-                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 180);
-                myDir = directions.NORTH;
-                break;
-            case directions.EAST:
-                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), -90);
-                myDir = directions.WEST;
-                break;
-            case directions.WEST:
-                this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 90);
-                myDir = directions.EAST;
-                break;
-        }
-        pUpdateGraphicalDirections();
+        rotateImage(newDir);
     }
 
+    public void turnRight() {
+        directions newDir = directions.NORTH;
+        switch (myDir) {
+            case directions.NORTH:
+                newDir = directions.EAST;
+                break;
+            case directions.SOUTH:
+                newDir = directions.WEST;
+                break;
+            case directions.EAST:
+                newDir = directions.SOUTH;
+                break;
+            case directions.WEST:
+                newDir = directions.NORTH;
+                break;
+        }
+        rotateImage(newDir);
+    }
+
+    public void turnAround() {
+        directions newDir = directions.NORTH;
+        switch (myDir) {
+            case directions.NORTH:
+                newDir = directions.SOUTH;
+                break;
+            case directions.SOUTH:
+                newDir = directions.NORTH;
+                break;
+            case directions.EAST:
+                newDir = directions.WEST;
+                break;
+            case directions.WEST:
+                newDir = directions.EAST;
+                break;
+        }
+        rotateImage(newDir);
+    }
     public boolean checkForwardBounds(Player[] players) {
         boolean blocked = false;
         for (Player player : players) {
@@ -756,31 +748,72 @@ public class Player implements iPlayer{
     public void setBufferedImage(BufferedImage bufferedImage){
         this.bufferedImage = bufferedImage;
     }
+    public void rotateImage(directions newDirection) {
+        double targetAngle = 0;
+        switch (newDirection) {
+            case NORTH:
+                targetAngle = 0;
+                break;
+            case EAST:
+                targetAngle = 90;
+                break;
+            case SOUTH:
+                targetAngle = 180;
+                break;
+            case WEST:
+                targetAngle = -90;
+                break;
+        }
 
-    //not my code
+        double currentAngle = 0;
+        switch (myDir) {
+            case NORTH:
+                currentAngle = 0;
+                break;
+            case EAST:
+                currentAngle = 90;
+                break;
+            case SOUTH:
+                currentAngle = 180;
+                break;
+            case WEST:
+                currentAngle = -90;
+                break;
+        }
+
+        double rotationAngle = targetAngle - currentAngle;
+        if (rotationAngle > 180) {
+            rotationAngle -= 360;
+        } else if (rotationAngle < -180) {
+            rotationAngle += 360;
+        }
+
+        System.out.println("Current Direction: " + myDir);
+        System.out.println("New Direction: " + newDirection);
+        System.out.println("Current Angle: " + currentAngle);
+        System.out.println("Target Angle: " + targetAngle);
+        System.out.println("Rotation Angle: " + rotationAngle);
+
+        this.bufferedImage = rotateImageByDegrees(this.bufferedImage, rotationAngle);
+
+        this.myDir = newDirection;
+    }
+
+
     public static BufferedImage rotateImageByDegrees(BufferedImage img, double angle) {
-        double rads = Math.toRadians(angle);
-        double sin = Math.abs(Math.sin(rads)), cos = Math.abs(Math.cos(rads));
         int w = img.getWidth();
         int h = img.getHeight();
-        int newWidth = (int) Math.floor(w * cos + h * sin);
-        int newHeight = (int) Math.floor(h * cos + w * sin);
-
-        BufferedImage rotated = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage rotated = new BufferedImage(w, h, img.getType());
         Graphics2D g2d = rotated.createGraphics();
-        AffineTransform at = new AffineTransform();
-        at.translate((newWidth - w) / 2, (newHeight - h) / 2);
-
-        int x = w / 2;
-        int y = h / 2;
-
-        at.rotate(rads, x, y);
-        g2d.setTransform(at);
+        g2d.rotate(Math.toRadians(angle), w / 2, h / 2);
         g2d.drawImage(img, 0, 0, null);
         g2d.dispose();
-
         return rotated;
     }
+
+
+
+
 
 
 
