@@ -1,5 +1,6 @@
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 
 //todo
@@ -10,24 +11,28 @@ import java.io.IOException;
 // *3) define all coordinates on UI
 // 4) 2 more classes
 // 5) class select screen
-// 6) auto robot turns and disable buttons
+// *6) auto robot turns and disable buttons
 // 6a) Use WASD to move and Space to attack
+// 6b) include Giant scalable AI
 // 7) clean up encapsulation
+// 7a) clean up UI
 // 8) resizeable gameboard
 // 9) load multiple scenes and beyond
 public class Main {
     public static void main(String[] args) throws IOException {
-        JFrame frame = new JFrame();
-        JPanel heroesAndMonsters = new Game(1);
-
-        frame.add(heroesAndMonsters);
-        frame.setSize(1920,1080);
-        frame.setLayout(null);
+        JFrame frame = new JFrame("CardLayout Example");
+        frame.setSize(1920, 1080);
+        frame.setLayout(new BorderLayout()); // Use BorderLayout for proper layout management
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        StartScreen cardPanel = new StartScreen();
+        frame.add(cardPanel, BorderLayout.CENTER); // Add CardPanel to the center of the frame
+
         frame.setVisible(true);
     }
 }
+
 
 
 

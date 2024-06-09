@@ -1,9 +1,11 @@
 import java.awt.*;
 import java.io.IOException;
+import java.util.List;
 
 public class EntityControlManager implements iEntityControlManager {
    Node head;
    int size = 0;
+   private List<Player> players;
    Player pHead;
    int pSize = 0;
    int iSize = 0;
@@ -12,11 +14,6 @@ public class EntityControlManager implements iEntityControlManager {
    int bSize = 0;
 
    //Nodes in this case pertain only to world data and are therefore the only code initialized in each constructor
-   public EntityControlManager(Graphics mainGraphics) throws IOException {
-      this.head = new Node();
-      this.size++;
-   }
-
    public EntityControlManager(int worldData) throws IOException {
       this.head = new Node(worldData);
       this.size++;

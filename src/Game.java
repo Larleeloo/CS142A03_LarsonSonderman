@@ -1,6 +1,5 @@
 
 import javax.swing.*;
-import javax.swing.text.html.parser.Entity;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,8 +28,10 @@ public class Game extends JPanel {
     private int turnCounter = 0;
     Scene currentScene;
     private Hero player1;
-    private Goblin player2;
+    private Monster player2;
     Player[] allPlayers = {player1, player2};
+    int selectedClass;
+    int opponent;
     ButtonOneListener buttonOneListener = new ButtonOneListener();
     ButtonTwoListener buttonTwoListener = new ButtonTwoListener();
     ButtonThreeListener buttonThreeListener = new ButtonThreeListener();
@@ -38,7 +39,7 @@ public class Game extends JPanel {
     ButtonFiveListener buttonFiveListener = new ButtonFiveListener();
     GameStartListener gameStartListener = new GameStartListener();
     ActionEvent doAction = new ActionEvent(this, 1, "COMMAND1");
-    public Game(int landArea) throws IOException {
+    public Game(int landArea, int opponent, int selectedClass) throws IOException {
         currentScene = new Scene(10);
         this.setPreferredSize(new Dimension(1920,1080));
         this.setBounds(0,0,1920,1080);
@@ -77,8 +78,8 @@ public class Game extends JPanel {
         this.add(gameStartButton);
         gameStartButton.setBounds(720,600,500,30);
 
-        player1 = new Hero("Hero", 0, 0, 0);
-        player2 = new Goblin("Goblin", 0, 0);
+        player1 = new Hero("Hero");
+        player2 = new Monster("Monster");
         allPlayers = new Player[]{player1, player2};
 
         currentScene.pPushNew(player2);
@@ -87,6 +88,9 @@ public class Game extends JPanel {
         this.gameGraphics = new GameGraphics(currentScene);
         gameGraphics.setBounds(0,0,720,1080);
         this.add(gameGraphics);
+
+        this.opponent = opponent;
+        this.selectedClass = selectedClass;
     }
     private void disablePlayerControls() {
         button1.setEnabled(false);
@@ -128,25 +132,43 @@ public class Game extends JPanel {
             return player2;
         }
     }
-    public void playGame() {
+    public void playGame() throws IOException {
         player1 = initializeHuman();
     }
 
-    public void initializeGame() {
+    public void initializeGame() throws IOException {
         playGame();
     }
-    private Hero initializeHuman() {
+    private Hero initializeHuman() throws IOException {
         instructions.setText("Please select a name below for your player");
-        player1.setRole(0);
-        player1.setBoardPos(9,9);
-        player1.turnAround();
+        switch (selectedClass){
+            case 1:
+                player1 = new Knight();
+                break;
+            case 2:
+                player1 = new Wizard();
+                break;
+            case 3:
+                player1 = new Ranger();
+                break;
+        }
         gameGraphics.nextFrame();
         gameState = 1;
         return player1;
     }
-    private Player initializeComputer(){
+    private Player initializeComputer() throws IOException {
         instructions.setText("Who would you like to play against? This is your opponent... choose wisely");
-        player2.setRole(2);
+        switch (opponent){
+            case 1:
+                player2 = new Goblin();
+                break;
+            case 2:
+                player2 = new Giant();
+                break;
+            case 3:
+                player2 = new GiantGoblin();
+                break;
+        }
         gameGraphics.nextFrame();
         gameState = 2;
         return player2;
@@ -159,6 +181,8 @@ public class Game extends JPanel {
         } else {
             instructions.setText("Robot starts... Choose an action!");
             gameState = 4;
+            disablePlayerControls();
+            gameStartListener.actionPerformed(doAction);
         }
         turnCounter = 1;
         gameGraphics.nextFrame();
@@ -183,7 +207,11 @@ public class Game extends JPanel {
                     button3.setText("Name 3");
                     button4.setText("Name 4");
                     button5.setText("Name 5");
-                    initializeGame();
+                    try {
+                        initializeGame();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     break;
                 case 1:
                     button1.setText("rName 1");
@@ -193,7 +221,11 @@ public class Game extends JPanel {
                     button5.setText("rName 5");
                     directions.setVisible(true);
                     directions.setText("Human name: " + player1.getName());
-                    initializeComputer();
+                    try {
+                        initializeComputer();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     break;
                 case 2:
                     button1.setText("Move");
@@ -212,17 +244,17 @@ public class Game extends JPanel {
                     button3.setText("Turn Right");
                     button4.setText("Turn Around");
                     button5.setText("Attack");
+                    instructions.setText(player1.getName() + "'s turn...");
                     printAllEntityCoords(allPlayers);
                     gameGraphics.nextFrame();
                     logPlayerPosition(player1);
-                    instructions.setText(player1.getName() + "'s turn...");
                     takeTurn();
                     input = 0;
                     break;
                 case 4:
                     disablePlayerControls();
                     try {
-                        player2.takeTurn(allPlayers);
+                        player2.autoMove(allPlayers);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }

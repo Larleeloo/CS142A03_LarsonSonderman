@@ -3,29 +3,23 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
-public class Giant extends Player{
-
-    BufferedImage attackArea;
-    File giantAttackArea;
-
+public class Giant extends Monster{
     private boolean attackDelay;
     public Giant() throws IOException {
-        super();
+        super("Giant");
         this.setHP(30);
         this.setMaxHP(60);
         this.setDiameter(2);
         File giantTexture1 = new File("Giant1.png");
         this.setBufferedImage(ImageIO.read(giantTexture1));
-        giantAttackArea = new File("Enemy_Attack_Area.png");
-        attackArea = ImageIO.read(giantAttackArea);
-
         this.xBoardCoords = 0;
         this.yBoardCoords = 0;
         this.xGraphicalCoords = 24 + (72 * xBoardCoords);
         this.yGraphicalCoords = 24 + (72 * yBoardCoords);
 
-        this.setRole(2);
+        this.setRole(5);
         this.attackDelay = true;
         this.setDiameter(2);
     }
@@ -36,13 +30,6 @@ public class Giant extends Player{
 
         this.xBoardCoords = (xGraphicalCoords - 24) / 72;
         this.yBoardCoords = (yGraphicalCoords - 24) / 72;
-    }
-    public BufferedImage getAttackArea(){
-        return this.attackArea;
-    }
-
-    public void setAttackArea(BufferedImage attackArea){
-        this.attackArea = attackArea;
     }
 
     @Override

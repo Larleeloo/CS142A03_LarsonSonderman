@@ -2,29 +2,24 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 
 public class Goblin extends Monster{
-    BufferedImage attackArea;
-    File GoblinAttackArea;
-    public Goblin(String name, int xBoardCoords, int yBoardCoords) throws IOException {
-        super();
-        this.setRole(1);
-        this.xBoardCoords = xBoardCoords;
-        this.yBoardCoords = yBoardCoords;
-        this.setName(name);
-        File goblinTexture1 = new File("Goblin1.png");
-        this.setBufferedImage(ImageIO.read(goblinTexture1));
-
-        GoblinAttackArea = new File("Enemy_Attack_Area.png");
-        attackArea = ImageIO.read(GoblinAttackArea);
+    public Goblin() throws IOException {
+        super("Goblin");
+        this.setRole(4);
+        this.setName("Goblin");
+        setBufferedImage(getBufferedImage());
     }
-
-    public BufferedImage getAttackArea(){
-        return this.attackArea;
-    }
-
-    public void setAttackArea(BufferedImage attackArea){
-        this.attackArea = attackArea;
+    @Override
+    public BufferedImage getBufferedImage() throws IOException {
+        BufferedImage goblinSprite;
+        InputStream is2 = Goblin.class.getResourceAsStream("/Resources/Goblin1.png");
+        if (is2 == null) {
+            throw new IOException("Resource not found: /Resources/Goblin1.png");
+        }
+        goblinSprite = ImageIO.read(is2);
+        return goblinSprite;
     }
 }

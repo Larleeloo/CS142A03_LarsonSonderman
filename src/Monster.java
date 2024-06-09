@@ -1,14 +1,28 @@
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Random;
+import java.io.InputStream;
 
 public class Monster extends Player {
     public Player[] allPlayers;
-
-    public Monster() throws IOException {
+    public Monster(String name) throws IOException {
         super();
+        setmyDir(1);
+        setName(name);
+        setBoardPos(0,0);
     }
 
-    public void takeTurn(Player[] allPlayers) throws IOException {
+    public static BufferedImage getAttackArea() throws IOException {
+        BufferedImage attackArea;
+        InputStream is2 = Goblin.class.getResourceAsStream("/Resources/Enemy_Attack_Area.png");
+        if (is2 == null) {
+            throw new IOException("Resource not found: /Resources/Enemy_Attack_Area.png");
+        }
+        attackArea = ImageIO.read(is2);
+        return attackArea;
+    }
+
+    public void autoMove(Player[] allPlayers) throws IOException {
         // Monster-specific update logic
         this.allPlayers = allPlayers;
         System.out.println("Monster is taking its turn...");
@@ -22,7 +36,6 @@ public class Monster extends Player {
             // No players to target
             return;
         }
-
         // Determine action: move towards the player or attack
         if (isAdjacent(nearestPlayer)) {
             turnToFace(nearestPlayer);

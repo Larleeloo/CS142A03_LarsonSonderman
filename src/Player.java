@@ -4,9 +4,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
 
-public class Player implements iPlayer{
+public abstract class Player implements iPlayer{
 
     int diameter;
     Color color;
@@ -17,7 +18,10 @@ public class Player implements iPlayer{
     private enum role{
         GOBLIN,
         KNIGHT,
-        GIANT
+        GIANT,
+        RANGER,
+        WIZARD,
+        GIANT_GOBLIN,
     };
 
     role pRole;
@@ -49,9 +53,12 @@ public class Player implements iPlayer{
 
         this.alive = true;
         this.color = null;
-        file = new File("Knight1.png");
-        bufferedImage = ImageIO.read(file);
-
+        file = new File("src/Resources/Knight1.png");
+        InputStream is = getClass().getResourceAsStream("/Resources/Knight1.png");
+        if (is == null) {
+            throw new IOException("Resource not found: /Resources/Knight1.png");
+        }
+        bufferedImage = ImageIO.read(is);
         data = 0;
         name = "NONE";
         pRole = role.KNIGHT;
@@ -253,26 +260,38 @@ public class Player implements iPlayer{
 
     public role roleTranslate(int intRole){
         switch (intRole){
-            case 0:
-                return role.KNIGHT;
             case 1:
-                return role.GOBLIN;
+                return role.KNIGHT;
             case 2:
+                return role.WIZARD;
+            case 3:
+                return role.RANGER;
+            case 4:
+                return role.GOBLIN;
+            case 5:
                 return role.GIANT;
+            case 6:
+                return role.GIANT_GOBLIN;
             default:
                 System.out.println("Error default role assigned");
-                return role.KNIGHT;
+                return role.GOBLIN;
         }
 
     }
     public int roleTranslate(role role){
         switch (role){
             case role.KNIGHT:
-                return 0;
-            case role.GOBLIN:
                 return 1;
-            case role.GIANT:
+            case role.WIZARD:
                 return 2;
+            case role.RANGER:
+                return 3;
+            case role.GOBLIN:
+                return 4;
+            case role.GIANT:
+                return 5;
+            case role.GIANT_GOBLIN:
+                return 6;
             default:
                 return 0;
         }
@@ -316,7 +335,7 @@ public class Player implements iPlayer{
         return this.alive;
     }
 
-    public void pUpdateGraphicalDirections(){
+    public void pUpdateGraphicalDirections() throws IOException {
         switch (myDir){
             case directions.NORTH:
                 this.bufferedImage = rotateImageByDegrees(this.getBufferedImage(), 0);
@@ -733,7 +752,7 @@ public class Player implements iPlayer{
     public File getFile(){
         return this.file;
     }
-    public BufferedImage getBufferedImage(){
+    public BufferedImage getBufferedImage() throws IOException {
         return this.bufferedImage;
     }
     public void setDiameter(int diameter){

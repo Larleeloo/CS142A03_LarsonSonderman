@@ -2,13 +2,14 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class Hero extends Player {
     BufferedImage attackArea;
-    File HeroAttackArea;
-    public Hero(String name, int role, int xBoardCoords, int yBoardCoords) throws IOException {
+    public Hero(String name) throws IOException {
         super();
-        this.name = name;
+        setName(name);
+        setBoardPos(9,9);
         this.hp = 10; // Example health value
         this.xBoardCoords = xBoardCoords;
         this.yBoardCoords = yBoardCoords;
@@ -16,15 +17,22 @@ public class Hero extends Player {
         this.yGraphicalCoords = (72 * yBoardCoords) + 12;
         this.diameter = 1; // Example diameter value
         this.alive = true;
-        this.myDir = directions.NORTH; // Default direction
-        this.file = new File("Knight1.png");
-        this.bufferedImage = ImageIO.read(file);
-
-        HeroAttackArea = new File("Friendly_Attack_Area.png");
-        attackArea = ImageIO.read(HeroAttackArea);
+        setmyDir(3);// Default direction
+        this.file = new File("src/Resources/Knight1.png");
+        InputStream is = getClass().getResourceAsStream("/Resources/Knight1.png");
+        if (is == null) {
+            throw new IOException("Resource not found: /Resources/Knight1.png");
+        }
+        bufferedImage = ImageIO.read(is);
     }
-    public BufferedImage getAttackArea(){
-        return this.attackArea;
+    public static BufferedImage getAttackArea() throws IOException {
+        BufferedImage attackArea;
+        InputStream is2 = Goblin.class.getResourceAsStream("/Resources/Friendly_Attack_Area.png");
+        if (is2 == null) {
+            throw new IOException("Resource not found: /Resources/Friendly_Attack_Area.png");
+        }
+        attackArea = ImageIO.read(is2);
+        return attackArea;
     }
 
     public void setAttackArea(BufferedImage attackArea){

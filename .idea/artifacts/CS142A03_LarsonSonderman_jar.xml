@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CS142A03_LarsonSonderman:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CS142A03_LarsonSonderman_jar</output-path>
+    <root id="archive" name="CS142A03_LarsonSonderman.jar">
+      <element id="module-output" name="CS142A03_LarsonSonderman" />
+      <element id="dir-copy" path="$PROJECT_DIR$/src/Resources" />
+    </root>
+  </artifact>
+</component>
